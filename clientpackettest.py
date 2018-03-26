@@ -1,7 +1,7 @@
 # Echo client program
 import socket
 #import RPi.GPIO as GPIO
-from sync.python.serialpacket import *
+from serialpacket import *
 
 HOST = 'localhost'    # The remote host
 PORT = 50007              # The same port as used by the server

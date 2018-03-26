@@ -20,6 +20,7 @@ import threading
 import socket
 from operator import itemgetter, attrgetter
 from itertools import count, starmap
+from serialpacket import *
 
 import errno
 from pyglet import event
@@ -33,7 +34,20 @@ coloredlogs.install(level='DEBUG',fmt='%(asctime)s %(hostname)s %(name)s[%(proce
 #logging.basicConfig(level=logging.DEBUG, format='(%(threadName)-9s) %(message)s',)
 #logging.setLoggerClass(ColoredLogger)
 
-program="A:/gstreamer/1.0/x86_64/bin/gst-launch-1.0.exe"
+program = "A:/gstreamer/1.0/x86_64/bin/gst-launch-1.0.exe"
+
+r_trigger = 'r_0.0'
+l_trigger = 'l_0.0'
+l_thumb_y = 'ly_0.0'
+l_thumb_x = 'lx_0.0'
+r_thumb_y = 'y_0.0'
+r_thumb_x = 'x_0.0'
+r_trigger_f = 0
+l_trigger_f = 0
+l_thumb_y_f = 0
+l_thumb_x_f = 0
+r_thumb_y_f = 0
+r_thumb_x_f = 0
 
 # structs according to
 # http://msdn.microsoft.com/en-gb/library/windows/desktop/ee417001%28v=vs.85%29.aspx
@@ -262,7 +276,7 @@ class XInputJoystick(event.EventDispatcher):
             # an attempt to add deadzones and dampen noise
             # done by feel rather than following http://msdn.microsoft.com/en-gb/library/windows/desktop/ee417001%28v=vs.85%29.aspx#dead_zone
             # ags, 2014-07-01
-            if ((old_val != new_val and abs(old_val - new_val) > 0.00000000500000000) or
+            if ((old_val != new_val and abs(old_val - new_val) > 0.00400000000) or
                (axis == 'right_trigger' or axis == 'left_trigger') and new_val == 0 and abs(old_val - new_val) > 0.00000000500000000):
                 self.dispatch_event('on_axis', axis, new_val)
 
@@ -349,6 +363,7 @@ def determine_optimal_sample_rate(joystick=None):
     print("final probe frequency was %s Hz" % j.probe_frequency)
 
 def handle_joystick(conn, addr, signal_list):
+    global r_trigger, l_trigger, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x, r_trigger_f, l_trigger_f, l_thumb_y_f, l_thumb_x_f, r_thumb_y_f, r_thumb_x_f
     """
     Grab 1st available gamepad, logging changes to the screen.
     L & R analogue triggers set the vibration motor speed.
@@ -377,29 +392,30 @@ def handle_joystick(conn, addr, signal_list):
 
     @j.event
     def on_axis(axis, value):
+        global r_trigger, l_trigger, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x, r_trigger_f, l_trigger_f, l_thumb_y_f, l_thumb_x_f, r_thumb_y_f, r_thumb_x_f
         left_speed = 0
         right_speed = 0
         data = 0
 
         print('axis', axis, value)
         if axis == "l_thumb_y":
-            data = 'ly_' + str(value) + '\n'
-            conn.sendall(data)
+            l_thumb_y = 'ly_' + str(value)
+            l_thumb_y_f = 1
         if axis == "l_thumb_x":
-            data = 'lx_' + str(value) + '\n'
-            conn.sendall(data)
+            l_thumb_x = 'lx_' + str(value)
+            l_thumb_x_f = 1
         if axis == "r_thumb_y":
-            data = 'y_' + str(value) + '\n'
-            conn.sendall(data)
+            r_thumb_y = 'y_' + str(value)
+            r_thumb_y_f = 1
         if axis == "r_thumb_x":
-            data = 'x_' + str(value) + '\n'
-            conn.sendall(data)
+            r_thumb_x = 'x_' + str(value)
+            r_thumb_x_f = 1
         if axis == "left_trigger":
-            data = 'l_' + str(value) + '\n'
-            conn.sendall(data)
+            l_trigger = 'l_' + str(value)
+            l_trigger_f = 1
         elif axis == "right_trigger":
-            data = 'r_' + str(value) + '\n'
-            conn.sendall(data)
+            r_trigger = 'r_' + str(value)
+            r_trigger_f = 1
         # j.set_vibration(left_speed, right_speed)
 
     try:
@@ -417,6 +433,7 @@ def handle_joystick(conn, addr, signal_list):
 
 
 def handle_socket(conn, addr, signal_list):
+    global r_trigger, l_trigger, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x, r_trigger_f, l_trigger_f, l_thumb_y_f, l_thumb_x_f, r_thumb_y_f, r_thumb_x_f
     try:
         proc = subprocess.Popen(
             [program, "udpsrc", "port=4200", "!", "h264parse", "!", "avdec_h264", "!", "textoverlay",
@@ -429,7 +446,45 @@ def handle_socket(conn, addr, signal_list):
 
                 # if global state is updated
                 #     send update to pi
-                
+                try:
+                    if r_trigger_f:
+                        r_trigger_f = 0
+                        packet = Packet(TYPE_CMD_UPDATE, r_trigger)
+                        response = send_command(conn, packet)
+                        print('Received Response: ')
+                        print(response)
+                    if l_trigger_f:
+                        l_trigger_f = 0
+                        packet = Packet(TYPE_CMD_UPDATE, l_trigger)
+                        response = send_command(conn, packet)
+                        print('Received Response: ')
+                        print(response)
+                    if l_thumb_y_f:
+                        l_thumb_y_f = 0
+                        packet = Packet(TYPE_CMD_UPDATE, l_thumb_y)
+                        response = send_command(conn, packet)
+                        print('Received Response: ')
+                        print(response)
+                    if l_thumb_x_f:
+                        l_thumb_x_f = 0
+                        packet = Packet(TYPE_CMD_UPDATE, l_thumb_x)
+                        response = send_command(conn, packet)
+                        print('Received Response: ')
+                        print(response)
+                    if r_thumb_y_f:
+                        r_thumb_y_f = 0
+                        packet = Packet(TYPE_CMD_UPDATE, r_thumb_y)
+                        response = send_command(conn, packet)
+                        print('Received Response: ')
+                        print(response)
+                    if r_thumb_x_f:
+                        r_thumb_x_f = 0
+                        packet = Packet(TYPE_CMD_UPDATE, r_thumb_x)
+                        response = send_command(conn, packet)
+                        print('Received Response: ')
+                        print(response)
+                except PacketException:
+                    print("Invalid packet dropped")
                 # read sensor data from pi 
                 #response = send_command(conn,Packet(...))
                 #packet = Packet(TYPETOREQUESTDATA, WHICHSENSOR?)

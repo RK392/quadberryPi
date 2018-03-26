@@ -1,7 +1,7 @@
 # Echo server program
 import socket
 
-from sync.python.serialpacket import *
+from serialpacket import *
 
 HOST = 'localhost'                 # Symbolic name meaning all available interfaces
 PORT = 50007              # Arbitrary non-privileged port
