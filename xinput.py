@@ -16,9 +16,24 @@ pip install --upgrade http://pyglet.googlecode.com/archive/tip.zip
 import ctypes
 import sys
 import time
+import threading
+import socket
 from operator import itemgetter, attrgetter
 from itertools import count, starmap
+
+import errno
 from pyglet import event
+import subprocess
+import logging
+import coloredlogs
+
+#logging.basicConfig(format='%(asctime)s - %(threadName)s - %(levelname)s - %(message)s')
+coloredlogs.install(level='DEBUG',fmt='%(asctime)s %(hostname)s %(name)s[%(process)d] [%(threadName)s] %(levelname)s %(message)s')
+
+#logging.basicConfig(level=logging.DEBUG, format='(%(threadName)-9s) %(message)s',)
+#logging.setLoggerClass(ColoredLogger)
+
+program="A:/gstreamer/1.0/x86_64/bin/gst-launch-1.0.exe"
 
 # structs according to
 # http://msdn.microsoft.com/en-gb/library/windows/desktop/ee417001%28v=vs.85%29.aspx
@@ -51,7 +66,7 @@ class XINPUT_BATTERY_INFORMATION(ctypes.Structure):
     _fields_ = [("BatteryType", ctypes.c_ubyte),
                 ("BatteryLevel", ctypes.c_ubyte)]
 
-xinput = ctypes.windll.xinput1_3
+xinput = ctypes.windll.xinput1_4
 #xinput = ctypes.windll.xinput9_1_0  # this is the Win 8 version ?
 # xinput1_2, xinput1_1 (32-bit Vista SP1)
 # xinput1_3 (64-bit Vista SP1)
@@ -247,7 +262,7 @@ class XInputJoystick(event.EventDispatcher):
             # an attempt to add deadzones and dampen noise
             # done by feel rather than following http://msdn.microsoft.com/en-gb/library/windows/desktop/ee417001%28v=vs.85%29.aspx#dead_zone
             # ags, 2014-07-01
-            if ((old_val != new_val and (new_val > 0.08000000000000000 or new_val < -0.08000000000000000) and abs(old_val - new_val) > 0.00000000500000000) or
+            if ((old_val != new_val and abs(old_val - new_val) > 0.00000000500000000) or
                (axis == 'right_trigger' or axis == 'left_trigger') and new_val == 0 and abs(old_val - new_val) > 0.00000000500000000):
                 self.dispatch_event('on_axis', axis, new_val)
 
@@ -333,16 +348,16 @@ def determine_optimal_sample_rate(joystick=None):
         time.sleep(1.0 / j.probe_frequency)
     print("final probe frequency was %s Hz" % j.probe_frequency)
 
-
-def sample_first_joystick():
+def handle_joystick(conn, addr, signal_list):
     """
     Grab 1st available gamepad, logging changes to the screen.
     L & R analogue triggers set the vibration motor speed.
     """
+
     joysticks = XInputJoystick.enumerate_devices()
     device_numbers = list(map(attrgetter('device_number'), joysticks))
 
-    print('found %d devices: %s' % (len(joysticks), device_numbers))
+    logging.debug('found %d devices: %s' % (len(joysticks), device_numbers))
 
     if not joysticks:
         sys.exit(0)
@@ -364,18 +379,122 @@ def sample_first_joystick():
     def on_axis(axis, value):
         left_speed = 0
         right_speed = 0
+        data = 0
 
         print('axis', axis, value)
+        if axis == "l_thumb_y":
+            data = 'ly_' + str(value) + '\n'
+            conn.sendall(data)
+        if axis == "l_thumb_x":
+            data = 'lx_' + str(value) + '\n'
+            conn.sendall(data)
+        if axis == "r_thumb_y":
+            data = 'y_' + str(value) + '\n'
+            conn.sendall(data)
+        if axis == "r_thumb_x":
+            data = 'x_' + str(value) + '\n'
+            conn.sendall(data)
         if axis == "left_trigger":
-            left_speed = value
+            data = 'l_' + str(value) + '\n'
+            conn.sendall(data)
         elif axis == "right_trigger":
-            right_speed = value
-        j.set_vibration(left_speed, right_speed)
+            data = 'r_' + str(value) + '\n'
+            conn.sendall(data)
+        # j.set_vibration(left_speed, right_speed)
 
-    while True:
-        j.dispatch_events()
-        time.sleep(.01)
+    try:
+        while True:
+            if(signal_list[0]):
+                raise Exception("Kill signal sent")
+            #logging.debug("Send Loop")
+            conn.send("")
+            j.dispatch_events()
+            time.sleep(.01)
+    except Exception as e:
+        logging.error(e)
+    except KeyboardInterrupt:
+        logging.debug("Keyboard Interrupt")
+
+
+def handle_socket(conn, addr, signal_list):
+    try:
+        proc = subprocess.Popen(
+            [program, "udpsrc", "port=4200", "!", "h264parse", "!", "avdec_h264", "!", "textoverlay",
+             "text=quadberrypi",
+             "!", "autovideosink", "sync=false", "text-overlay=false"], shell=True)
+        while(True):
+            try:
+                if(signal_list[0]):
+                    raise Exception("Kill signal sent")
+
+                # if global state is updated
+                #     send update to pi
+                
+                # read sensor data from pi 
+                #response = send_command(conn,Packet(...))
+                #packet = Packet(TYPETOREQUESTDATA, WHICHSENSOR?)
+                #global variable = send_command(conn,Packet(REQUEST HERE)))
+                #data = conn.recv(1024)
+                #TODO: Check if this line needs to be added to serialpacket.py
+                #if not data: break
+                #Handle input here
+            except socket.error, e:
+                if e.args[0] == errno.EWOULDBLOCK:
+                    #print 'EWOULDBLOCK'
+                    time.sleep(1)  # short delay, no tight loops
+    except Exception as e:
+        logging.error(e)
+    except KeyboardInterrupt:
+        logging.debug("Keyboard Interrupt")
+    finally:
+        logging.info("Terminating Camera")
+        proc.terminate()
+
+
+def run_server():
+    threads = []
+    signal = False
+    signal_list = [signal]
+    try:
+        HOST = ''                 # Symbolic name meaning all available interfaces
+        PORT = 50008              # Arbitrary non-privileged port
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(0.2)  # timeout for listening
+
+        s.bind((HOST, PORT))
+        s.listen(1)
+        c_count = 1
+        while(True):
+            try:
+                conn, addr = s.accept()
+                logging.info("Connection made on "+str(addr))
+                t1 = threading.Thread(name="handle_joystick_"+str(c_count), target=handle_joystick, args=(conn, addr, signal_list))
+                t2 = threading.Thread(name="handle_socket_"+str(c_count), target=handle_socket, args=(conn, addr, signal_list))
+                t1.start()
+                t2.start()
+                threads.append(t1)
+                threads.append(t2)
+                c_count = c_count + 1
+                #while(t1.is_alive() or t2.is_alive()):
+                    #t1.join(5)
+                    #t2.join(5)
+            except socket.timeout:
+                pass
+    except Exception as e:
+        logging.error(e)
+    except KeyboardInterrupt:
+        logging.debug("Keyboard Interrupt")
+    finally:
+        logging.info("Tidying up")
+        signal_list[0] = True
+        for c_thread in threads:
+            c_thread.join()
+
 
 if __name__ == "__main__":
-    sample_first_joystick()
+    run_server()
+    #sample_first_joystick()
     # determine_optimal_sample_rate()
+
+#data = conn.recv(1024)
+#if not data: data = 0
