@@ -36,12 +36,14 @@ coloredlogs.install(level='DEBUG',fmt='%(asctime)s %(hostname)s %(name)s[%(proce
 
 program = "A:/gstreamer/1.0/x86_64/bin/gst-launch-1.0.exe"
 
+#controller values
 r_trigger = 'r_0.0'
 l_trigger = 'l_0.0'
 l_thumb_y = 'ly_0.0'
 l_thumb_x = 'lx_0.0'
 r_thumb_y = 'y_0.0'
 r_thumb_x = 'x_0.0'
+#value change flags
 r_trigger_f = 0
 l_trigger_f = 0
 l_thumb_y_f = 0
@@ -423,9 +425,9 @@ def handle_joystick(conn, addr, signal_list):
             if(signal_list[0]):
                 raise Exception("Kill signal sent")
             #logging.debug("Send Loop")
-            conn.send("")
+            #conn.send("")
             j.dispatch_events()
-            time.sleep(.01)
+            #time.sleep(.01)
     except Exception as e:
         logging.error(e)
     except KeyboardInterrupt:
@@ -495,8 +497,8 @@ def handle_socket(conn, addr, signal_list):
                 #Handle input here
             except socket.error, e:
                 if e.args[0] == errno.EWOULDBLOCK:
-                    #print 'EWOULDBLOCK'
-                    time.sleep(1)  # short delay, no tight loops
+                    print 'EWOULDBLOCK'
+                    #time.sleep(1)  # short delay, no tight loops
     except Exception as e:
         logging.error(e)
     except KeyboardInterrupt:
@@ -514,7 +516,7 @@ def run_server():
         HOST = ''                 # Symbolic name meaning all available interfaces
         PORT = 50008              # Arbitrary non-privileged port
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(0.02)  # timeout for listening
+        s.settimeout(0.2)  # timeout for listening
         #s.setblocking(0)
 
         s.bind((HOST, PORT))

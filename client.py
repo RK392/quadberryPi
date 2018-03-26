@@ -62,12 +62,20 @@ pid.setSampleTime(0.01)
 feedback = 0
 output = pid.output
 
+#controller values
 r_trigger = 'r_0.0'
 l_trigger = 'l_0.0'
 l_thumb_y = 'ly_0.0'
 l_thumb_x = 'lx_0.0'
 r_thumb_y = 'y_0.0'
 r_thumb_x = 'x_0.0'
+#value change flags
+r_trigger_f = 0
+l_trigger_f = 0
+l_thumb_y_f = 0
+l_thumb_x_f = 0
+r_thumb_y_f = 0
+r_thumb_x_f = 0
 
 ser = serial.Serial('/dev/ttyACM0', 115200)
 ser.flushInput()
@@ -165,7 +173,7 @@ def thread_1(threadName):
 
 
 def thread_2( threadName ):
-    global r_trigger, l_trigger, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x, value, throttle, reverse, bias, left, right, pi
+    global r_trigger, r_trigger_f, l_trigger, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x, value, throttle, reverse, bias, left, right, pi
     while True:
         id, value = l_trigger.split("_")
         if id == 'l':
@@ -189,35 +197,37 @@ def thread_2( threadName ):
                 right = 0
             pi.hardware_PWM(12, 1000, left * 1000000)
             pi.hardware_PWM(13, 1000, right * 1000000)
-        id, value = r_trigger.split("_")
-        if id == 'r':
-            # pid.SetPoint = value
-            pi.write(5, 0)
-            pi.write(6, 1)
-            pi.write(16, 0)
-            pi.write(20, 1)
-            throttle = float(value)
-            #sendt = str((int)(throttle * 255.999)) + '\n'
-            #print 'Sending to Uno: ', repr(sendt)
-            #ser.write(sendt)
-            #read_ser = ser.readline()
-            #print 'Recieved from Uno: ', (read_ser)
-            if bias > 0:
-                right = (throttle - bias)
-                left = throttle
-            elif bias < 0:
-                left = (throttle + bias)
-                right = throttle
-            elif bias == 0:
-                left = throttle
-                right = throttle
-            if left < 0:
-                left = 0
-            if right < 0:
-                right = 0
-            #print "left %s    right %s" % (left, right)
-            pi.hardware_PWM(12, 1000, left * 1000000)
-            pi.hardware_PWM(13, 1000, right * 1000000)
+        if r_trigger_f == 1:
+            r_trigger_f = 0
+            id, value = r_trigger.split("_")
+            if id == 'r':
+                # pid.SetPoint = value
+                pi.write(5, 0)
+                pi.write(6, 1)
+                pi.write(16, 0)
+                pi.write(20, 1)
+                throttle = float(value)
+                sendt = str((int)(throttle * 255.999)) + '\n'
+                print 'Sending to Uno: ', repr(sendt)
+                ser.write(sendt)
+                read_ser = ser.readline()
+                print 'Recieved from Uno: ', (read_ser)
+                if bias > 0:
+                    right = (throttle - bias)
+                    left = throttle
+                elif bias < 0:
+                    left = (throttle + bias)
+                    right = throttle
+                elif bias == 0:
+                    left = throttle
+                    right = throttle
+                if left < 0:
+                    left = 0
+                if right < 0:
+                    right = 0
+                #print "left %s    right %s" % (left, right)
+                pi.hardware_PWM(12, 1000, left * 1000000)
+                pi.hardware_PWM(13, 1000, right * 1000000)
         id, value = r_thumb_y.split("_")
         if id == 'y':
             pi.set_PWM_dutycycle(23, (-2 * float(value) * 0.0445 + 0.0805) * 255)
@@ -284,17 +294,23 @@ try:
                 id, value = command.split("_")
                 if id == "l":
                     l_trigger = 'l_' + str(value)
+                    l_trigger_f = 1
                 elif id == "r":
                     r_trigger = 'r_' + str(value)
+                    r_trigger_f = 1
                 elif id == "y":
                     r_thumb_y = 'y_' + str(value)
+                    r_thumb_y_f = 1
                 elif id == "x":
                     r_thumb_x = 'x_' + str(value)
+                    r_thumb_x_f = 1
                 elif id == "lx":
                     l_thumb_x = 'lx_' + str(value)
+                    l_thumb_x_f = 1
                 elif id == "ly":
                     l_thumb_y = 'ly_' + str(value)
-                    print 'Processed: ', repr(command)
+                    l_thumb_y_f = 1
+                print 'Processed: ', repr(command)
 
 
 except:

@@ -28,6 +28,8 @@
 #    parse sensor data
 #    return parsed sensor data
 
+#from time import sleep
+
 PACKET_FIELD_SIZE = 4
 PACKET_VALUE_SIZE = 6
 PACKET_MAX_DATA_SIZE = 1024
@@ -93,6 +95,7 @@ def _write_value(conn, value):
 # Server side send, expects response
 def send_command(conn, packet):
     write_packet(conn, packet)
+    #sleep(0.005)
     return read_packet(conn)
 
 
