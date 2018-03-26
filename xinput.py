@@ -449,40 +449,40 @@ def handle_socket(conn, addr, signal_list):
                 try:
                     if r_trigger_f:
                         r_trigger_f = 0
+                        print 'Sending Command: ', r_trigger
                         packet = Packet(TYPE_CMD_UPDATE, r_trigger)
                         response = send_command(conn, packet)
-                        print('Received Response: ')
-                        print(response)
+                        print 'Received Response: ', response
                     if l_trigger_f:
                         l_trigger_f = 0
+                        print 'Sending Command: ', l_trigger
                         packet = Packet(TYPE_CMD_UPDATE, l_trigger)
                         response = send_command(conn, packet)
-                        print('Received Response: ')
-                        print(response)
+                        print 'Received Response: ', response
                     if l_thumb_y_f:
                         l_thumb_y_f = 0
+                        print 'Sending Command: ', l_thumb_y
                         packet = Packet(TYPE_CMD_UPDATE, l_thumb_y)
                         response = send_command(conn, packet)
-                        print('Received Response: ')
-                        print(response)
+                        print 'Received Response: ', response
                     if l_thumb_x_f:
                         l_thumb_x_f = 0
+                        print 'Sending Command: ', l_thumb_x
                         packet = Packet(TYPE_CMD_UPDATE, l_thumb_x)
                         response = send_command(conn, packet)
-                        print('Received Response: ')
-                        print(response)
+                        print 'Received Response: ', response
                     if r_thumb_y_f:
                         r_thumb_y_f = 0
+                        print 'Sending Command: ', r_thumb_y
                         packet = Packet(TYPE_CMD_UPDATE, r_thumb_y)
                         response = send_command(conn, packet)
-                        print('Received Response: ')
-                        print(response)
+                        print 'Received Response: ', response
                     if r_thumb_x_f:
                         r_thumb_x_f = 0
+                        print 'Sending Command: ', r_thumb_x
                         packet = Packet(TYPE_CMD_UPDATE, r_thumb_x)
                         response = send_command(conn, packet)
-                        print('Received Response: ')
-                        print(response)
+                        print 'Received Response: ', response
                 except PacketException:
                     print("Invalid packet dropped")
                 # read sensor data from pi 

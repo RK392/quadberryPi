@@ -135,81 +135,90 @@ def thread_2( threadName ):
     global r_trigger, l_trigger, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x, value, throttle, reverse, bias, left, right, pi
     while True:
         id, value = l_trigger.split("_")
-        pi.write(5, 1)
-        pi.write(6, 0)
-        pi.write(16, 1)
-        pi.write(20, 0)
-        reverse = float(value)
-        if bias > 0:
-            right = (reverse - bias)
-            left = reverse
-        elif bias < 0:
-            left = (reverse + bias)
-            right = reverse
-        elif bias == 0:
-            left = reverse
-            right = reverse
-        if left < 0:
-            left = 0
-        if right < 0:
-            right = 0
-        pi.hardware_PWM(12, 1000, left * 1000000)
-        pi.hardware_PWM(13, 1000, right * 1000000)
+        if id == 'l':
+            pi.write(5, 1)
+            pi.write(6, 0)
+            pi.write(16, 1)
+            pi.write(20, 0)
+            reverse = float(value)
+            if bias > 0:
+                right = (reverse - bias)
+                left = reverse
+            elif bias < 0:
+                left = (reverse + bias)
+                right = reverse
+            elif bias == 0:
+                left = reverse
+                right = reverse
+            if left < 0:
+                left = 0
+            if right < 0:
+                right = 0
+            pi.hardware_PWM(12, 1000, left * 1000000)
+            pi.hardware_PWM(13, 1000, right * 1000000)
         id, value = r_trigger.split("_")
-        # pid.SetPoint = value
-        pi.write(5, 0)
-        pi.write(6, 1)
-        pi.write(16, 0)
-        pi.write(20, 1)
-        throttle = float(value)
-        sendt = str((int)(throttle * 255.999)) + '\n'
-        print 'Sending to Uno: ', repr(sendt)
-        ser.write(sendt)
-        read_ser = ser.readline()
-        print 'Recieved from Uno: ', (read_ser)
-        if bias > 0:
-            right = (throttle - bias)
-            left = throttle
-        elif bias < 0:
-            left = (throttle + bias)
-            right = throttle
-        elif bias == 0:
-            left = throttle
-            right = throttle
-        if left < 0:
-            left = 0
-        if right < 0:
-            right = 0
-        #print "left %s    right %s" % (left, right)
-        pi.hardware_PWM(12, 1000, left * 1000000)
-        pi.hardware_PWM(13, 1000, right * 1000000)
+        if id == 'r':
+            # pid.SetPoint = value
+            pi.write(5, 0)
+            pi.write(6, 1)
+            pi.write(16, 0)
+            pi.write(20, 1)
+            throttle = float(value)
+            sendt = str((int)(throttle * 255.999)) + '\n'
+            print 'Sending to Uno: ', repr(sendt)
+            ser.write(sendt)
+            read_ser = ser.readline()
+            print 'Recieved from Uno: ', (read_ser)
+            if bias > 0:
+                right = (throttle - bias)
+                left = throttle
+            elif bias < 0:
+                left = (throttle + bias)
+                right = throttle
+            elif bias == 0:
+                left = throttle
+                right = throttle
+            if left < 0:
+                left = 0
+            if right < 0:
+                right = 0
+            #print "left %s    right %s" % (left, right)
+            pi.hardware_PWM(12, 1000, left * 1000000)
+            pi.hardware_PWM(13, 1000, right * 1000000)
         id, value = r_thumb_y.split("_")
-        pi.set_PWM_dutycycle(23, (-2 * float(value) * 0.0445 + 0.0805) * 255)
-        #print "%s: Updating pid with value: %s" % (id, -2 * float(value) * 0.0445 + 0.0805)
+        if id == 'y':
+            pi.set_PWM_dutycycle(23, (-2 * float(value) * 0.0445 + 0.0805) * 255)
+            #print "%s: Updating pid with value: %s" % (id, -2 * float(value) * 0.0445 + 0.0805)
         id, value = r_thumb_x.split("_")
-        pi.set_PWM_dutycycle(24, (-2 * float(value) * 0.0425 + 0.0775) * 255)
-        #print "%s: Updating pid with value: %s" % (id, -2 * float(value) * 0.0445 + 0.0805)
-        id, value = r_thumb_y.split("_")
-        bias = float(value)
-        if (bias > 0) & (reverse == 0):
-            right = (throttle - bias)
-            left = throttle
-        elif (bias < 0) & (reverse == 0):
-            left = (throttle + bias)
-            right = throttle
-        elif (bias > 0) & (throttle == 0):
-            right = (reverse - bias)
-            left = reverse
-        elif (bias < 0) & (throttle == 0):
-            left = (reverse + bias)
-            right = reverse
-        if left < 0:
-            left = 0
-        if right < 0:
-            right = 0
-        #print "left %s    right %s" % (left, right)
-        pi.hardware_PWM(12, 1000, left * 1000000)
-        pi.hardware_PWM(13, 1000, right * 1000000)
+        if id == 'x':
+            pi.set_PWM_dutycycle(24, (-2 * float(value) * 0.0425 + 0.0775) * 255)
+            #print "%s: Updating pid with value: %s" % (id, -2 * float(value) * 0.0445 + 0.0805)
+        id, value = l_thumb_x.split("_")
+        if id == 'lx':
+            bias = float(value)
+            if (bias > 0) & (reverse == 0):
+                right = (throttle - bias)
+                left = throttle
+            elif (bias < 0) & (reverse == 0):
+                left = (throttle + bias)
+                right = throttle
+            elif (bias > 0) & (throttle == 0):
+                right = (reverse - bias)
+                left = reverse
+            elif (bias < 0) & (throttle == 0):
+                left = (reverse + bias)
+                right = reverse
+            if left < 0:
+                left = 0
+            if right < 0:
+                right = 0
+            #print "left %s    right %s" % (left, right)
+            pi.hardware_PWM(12, 1000, left * 1000000)
+            pi.hardware_PWM(13, 1000, right * 1000000)
+        id, value = l_thumb_y.split("_")
+        if id == 'ly':
+            bias = float(value)
+
 
 # def thread_2( threadName ):
 #   os.system('raspivid -t 0 -h 1080 -w 1920 -fps 30 -hf -vf -b 2000000 -o udp://192.168.1.71:4200')
@@ -231,11 +240,11 @@ try:
         # data = s.recv(1024)
         # s.close()
         packet = read_packet(s)
-        print("Packet Received: ")
-        print(packet)
+        print 'Packet Received: ', packet
         data = packet.data
-        print 'Received', repr(data)
+        print 'Received: ', repr(data)
         write_packet(s, Packet(TYPE_ACK, ''))
+        print 'Packet Acknowledgement Sent'
         for command in data.split('\n'):
             if command != "":
                 print 'Processed: ', repr(command)
