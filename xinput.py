@@ -514,7 +514,8 @@ def run_server():
         HOST = ''                 # Symbolic name meaning all available interfaces
         PORT = 50008              # Arbitrary non-privileged port
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s.settimeout(0.2)  # timeout for listening
+        s.settimeout(0.02)  # timeout for listening
+        #s.setblocking(0)
 
         s.bind((HOST, PORT))
         s.listen(1)

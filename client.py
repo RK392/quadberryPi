@@ -131,6 +131,39 @@ def update_pid(threadName):
             output = 0
         # pi.hardware_PWM(13, 1000, output*500000)
 
+
+def thread_1(threadName):
+    global r_trigger, l_trigger, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x, value, throttle, reverse, bias, left, right, pi, s
+    while True:
+        # s.sendall('Ready To Accept Data')
+        # data = s.recv(1024)
+        # s.close()
+        packet = read_packet(s)
+        write_packet(s, Packet(TYPE_ACK, ''))
+        print 'Packet Acknowledgement Sent'
+        print 'Packet Received: ', packet
+        data = packet.data
+        print 'Received: ', repr(data)
+        for command in data.split('\n'):
+            if command != "":
+                id, value = command.split("_")
+                if id == "l":
+                    l_trigger = 'l_' + str(value)
+                elif id == "r":
+                    r_trigger = 'r_' + str(value)
+                elif id == "y":
+                    r_thumb_y = 'y_' + str(value)
+                elif id == "x":
+                    r_thumb_x = 'x_' + str(value)
+                elif id == "lx":
+                    l_thumb_x = 'lx_' + str(value)
+                elif id == "ly":
+                    l_thumb_y = 'ly_' + str(value)
+                    print 'Processed: ', repr(command)
+
+
+
+
 def thread_2( threadName ):
     global r_trigger, l_trigger, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x, value, throttle, reverse, bias, left, right, pi
     while True:
@@ -164,11 +197,11 @@ def thread_2( threadName ):
             pi.write(16, 0)
             pi.write(20, 1)
             throttle = float(value)
-            sendt = str((int)(throttle * 255.999)) + '\n'
-            print 'Sending to Uno: ', repr(sendt)
-            ser.write(sendt)
-            read_ser = ser.readline()
-            print 'Recieved from Uno: ', (read_ser)
+            #sendt = str((int)(throttle * 255.999)) + '\n'
+            #print 'Sending to Uno: ', repr(sendt)
+            #ser.write(sendt)
+            #read_ser = ser.readline()
+            #print 'Recieved from Uno: ', (read_ser)
             if bias > 0:
                 right = (throttle - bias)
                 left = throttle
@@ -226,10 +259,11 @@ def thread_2( threadName ):
 # Create two threads as follows
 # try:
 #thread.start_new_thread(update_pid, ("PID-Thread",))
+#thread.start_new_thread( thread_1, ("Server-Thread",) )
 thread.start_new_thread( thread_2, ("Data-Thread",) )
 
-proc = subprocess.Popen(['raspivid -t 0 -h 1080 -w 1920 -fps 30 -hf -vf -b 2000000 -o udp://192.168.1.71:4200'],
-                        shell=True)
+
+proc = subprocess.Popen(['raspivid -t 0 -h 1080 -w 1920 -fps 30 -hf -vf -b 2000000 -o udp://192.168.1.71:4200'], shell=True)
 
 # except Exception e:
 #   print e
@@ -240,14 +274,13 @@ try:
         # data = s.recv(1024)
         # s.close()
         packet = read_packet(s)
+        write_packet(s, Packet(TYPE_ACK, ''))
+        print 'Packet Acknowledgement Sent'
         print 'Packet Received: ', packet
         data = packet.data
         print 'Received: ', repr(data)
-        write_packet(s, Packet(TYPE_ACK, ''))
-        print 'Packet Acknowledgement Sent'
         for command in data.split('\n'):
             if command != "":
-                print 'Processed: ', repr(command)
                 id, value = command.split("_")
                 if id == "l":
                     l_trigger = 'l_' + str(value)
@@ -261,6 +294,8 @@ try:
                     l_thumb_x = 'lx_' + str(value)
                 elif id == "ly":
                     l_thumb_y = 'ly_' + str(value)
+                    print 'Processed: ', repr(command)
+
 
 except:
     print("\nTidying up")
