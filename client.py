@@ -173,30 +173,39 @@ def thread_1(threadName):
 
 
 def thread_2( threadName ):
-    global r_trigger, r_trigger_f, l_trigger, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x, value, throttle, reverse, bias, left, right, pi
+    global r_trigger, r_trigger_f, l_trigger, l_trigger_f, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x, value, throttle, reverse, bias, left, right, pi
     while True:
-        id, value = l_trigger.split("_")
-        if id == 'l':
-            pi.write(5, 1)
-            pi.write(6, 0)
-            pi.write(16, 1)
-            pi.write(20, 0)
-            reverse = float(value)
-            if bias > 0:
-                right = (reverse - bias)
-                left = reverse
-            elif bias < 0:
-                left = (reverse + bias)
-                right = reverse
-            elif bias == 0:
-                left = reverse
-                right = reverse
-            if left < 0:
-                left = 0
-            if right < 0:
-                right = 0
-            pi.hardware_PWM(12, 1000, left * 1000000)
-            pi.hardware_PWM(13, 1000, right * 1000000)
+        if l_trigger_f == 1:
+            l_trigger_f = 0
+            id, value = l_trigger.split("_")
+            if id == 'l':
+                pi.write(5, 1)
+                pi.write(6, 0)
+                pi.write(16, 1)
+                pi.write(20, 0)
+                reverse = float(value)
+                sendt = str((int)(reverse * -255.999)) + '\n'
+                print 'Sending to Uno: ', repr(sendt)
+                ser.write(sendt)
+                read_ser = ser.readline()
+                print 'Recieved from Uno: ', (read_ser)
+                read_ser = ser.readline()
+                print 'Recieved from Uno: ', (read_ser)
+                if bias > 0:
+                    right = (reverse - bias)
+                    left = reverse
+                elif bias < 0:
+                    left = (reverse + bias)
+                    right = reverse
+                elif bias == 0:
+                    left = reverse
+                    right = reverse
+                if left < 0:
+                    left = 0
+                if right < 0:
+                    right = 0
+                pi.hardware_PWM(12, 1000, left * 1000000)
+                pi.hardware_PWM(13, 1000, right * 1000000)
         if r_trigger_f == 1:
             r_trigger_f = 0
             id, value = r_trigger.split("_")
@@ -210,6 +219,8 @@ def thread_2( threadName ):
                 sendt = str((int)(throttle * 255.999)) + '\n'
                 print 'Sending to Uno: ', repr(sendt)
                 ser.write(sendt)
+                read_ser = ser.readline()
+                print 'Recieved from Uno: ', (read_ser)
                 read_ser = ser.readline()
                 print 'Recieved from Uno: ', (read_ser)
                 if bias > 0:
