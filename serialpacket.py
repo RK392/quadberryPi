@@ -1,35 +1,3 @@
-#strt|pkid:000000|pknm:000000|type:000000|size:000000|data:......|stop
-
-#strt|type:   cmd|size:000005|data:lx500|stop
-#strt|type:   ack|stop
-
-#strt|type:   cmd|size:000007|data:rslight|stop
-#strt|type:readng|size:000050|data:1.2382397219837.....|stop
-
-#strt|type:   ack|stop
-
-## Server side
-# from serialpacket import *
-# packet = Packet(TYPE_CMD, 'lr1000')
-# responsePacket = sendCommand(conn, packet)
-
-
-## Client side
-# from serialpacket import *
-# packet = readPacket(conn)
-# # do something
-# response = Packet(TYPE_ACK, '')
-# writePacket(conn, response)
-
-#def readSensorData():
-#    response = send_command(bla)
-#    check response type == TYPE_SENSOR_DATA
-#    sensor_raw_data = response.data
-#    parse sensor data
-#    return parsed sensor data
-
-#from time import sleep
-
 PACKET_FIELD_SIZE = 4
 PACKET_VALUE_SIZE = 6
 PACKET_MAX_DATA_SIZE = 1024
@@ -40,9 +8,6 @@ FIELD_SIZE = 'size'
 FIELD_DATA = 'data'
 FIELD_STOP = 'stop'
 
-#TYPE_CMD = 'cmd'
-#TYPE_SEN = 'sen'
-
 TYPE_CMD_UPDATE = 'updt'
 TYPE_CMD_READ = 'read'
 
@@ -50,7 +15,6 @@ TYPE_ACK = 'ack'
 TYPE_VALUE = 'val'
 
 TYPE_ERR = 'err'
-
 
 class PacketException(Exception): pass
 

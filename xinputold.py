@@ -21,29 +21,14 @@ import socket
 from operator import itemgetter, attrgetter
 from itertools import count, starmap
 from serialpacket import *
-import server_ui
 
 import errno
 from pyglet import event
 import subprocess
 import logging
-import json
 import coloredlogs
 
-DISABLE_UI_FLAG = False
-LOG_LEVEL = 'INFO'
-
-CTRL_FLAG = 'flag'
-CTRL_JOYSTICK_FIELD = 'joystick_field'
-CTRL_NETWORK_LABEL = 'nw_label'
-CTRL_VALUE = 'value'
-
-REFRESH_INTERVAL = 0.25
-
-VIDEO_STREAMING_PROGRAM = "A:/gstreamer/1.0/x86_64/bin/gst-launch-1.0.exe"
-
-if not DISABLE_UI_FLAG:
-    app = server_ui.DashboardApp()
+program = "A:/gstreamer/1.0/x86_64/bin/gst-launch-1.0.exe"
 
 # 1 Dpad Up
 # 2 Dpad Down
@@ -61,37 +46,60 @@ if not DISABLE_UI_FLAG:
 # 16 Y
 
 #controller values
-ctrl_map = {
-    "r_trigger": {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 'right_trigger', CTRL_NETWORK_LABEL: 'r'},
-    'l_trigger': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 'left_trigger', CTRL_NETWORK_LABEL: 'l'},
-    'l_thumb_y': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 'l_thumb_y', CTRL_NETWORK_LABEL: 'ly'},
-    'l_thumb_x': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 'l_thumb_x', CTRL_NETWORK_LABEL: 'lx'},
-    'r_thumb_y': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 'r_thumb_y', CTRL_NETWORK_LABEL: 'y'},
-    'r_thumb_x': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 'r_thumb_x', CTRL_NETWORK_LABEL: 'x'},
+r_trigger = 'r_0.0'
+l_trigger = 'l_0.0'
+l_thumb_y = 'ly_0.0'
+l_thumb_x = 'lx_0.0'
+r_thumb_y = 'y_0.0'
+r_thumb_x = 'x_0.0'
 
-    'button_dpad_up': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 1, CTRL_NETWORK_LABEL: 'bdu'},
-    'button_dpad_down': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 2, CTRL_NETWORK_LABEL: 'bdd'},
-    'button_dpad_left': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 3, CTRL_NETWORK_LABEL: 'bdl'},
-    'button_dpad_right': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 4, CTRL_NETWORK_LABEL: 'bdr'},
+button_dpad_up = 'bdu_0'
+button_dpad_down = 'bdd_0'
+button_dpad_left = 'bdl_0'
+button_dpad_right = 'bdr_0'
 
-    'button_a':  {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 13, CTRL_NETWORK_LABEL: 'ba'},
-    'button_b':  {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 14, CTRL_NETWORK_LABEL: 'bb'},
-    'button_x':  {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 15, CTRL_NETWORK_LABEL: 'bx'},
-    'button_y':  {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 16, CTRL_NETWORK_LABEL: 'by'},
+button_a = 'ba_0'
+button_b = 'bb_0'
+button_x = 'bx_0'
+button_y = 'by_0'
 
-    'button_l1': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 9, CTRL_NETWORK_LABEL: 'bl1'},
-    'button_r1': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 10, CTRL_NETWORK_LABEL: 'br1'},
-    'button_l3': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 7, CTRL_NETWORK_LABEL: 'bl3'},
-    'button_r3': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 8, CTRL_NETWORK_LABEL: 'br3'},
+button_l1 = 'bl1_0'
+button_r1 = 'br1_0'
+button_l3 = 'bl3_0'
+button_r3 = 'br3_0'
 
-    'button_start': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 5, CTRL_NETWORK_LABEL: 'bstart'},
-    'button_back': {CTRL_FLAG:False, CTRL_JOYSTICK_FIELD: 6, CTRL_NETWORK_LABEL: 'bback'}
-}
+button_start = 'bstart_0'
+button_back = 'bback_0'
 
-state_map = {}
+#value change flags
+r_trigger_f = 0
+l_trigger_f = 0
+l_thumb_y_f = 0
+l_thumb_x_f = 0
+r_thumb_y_f = 0
+r_thumb_x_f = 0
+
+button_dpad_up_f = 0
+button_dpad_down_f = 0
+button_dpad_left_f = 0
+button_dpad_right_f = 0
+
+button_a_f = 0
+button_b_f = 0
+button_x_f = 0
+button_y_f = 0
+
+button_l1_f = 0
+button_r1_f = 0
+button_l3_f = 0
+button_r3_f = 0
+
+button_start_f = 0
+button_back_f = 0
 
 # structs according to
 # http://msdn.microsoft.com/en-gb/library/windows/desktop/ee417001%28v=vs.85%29.aspx
+
 
 class XINPUT_GAMEPAD(ctypes.Structure):
     _fields_ = [
@@ -403,6 +411,7 @@ def determine_optimal_sample_rate(joystick=None):
     print("final probe frequency was %s Hz" % j.probe_frequency)
 
 def handle_joystick(conn, addr, signal_list):
+    global r_trigger, l_trigger, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x, r_trigger_f, l_trigger_f, l_thumb_y_f, l_thumb_x_f, r_thumb_y_f, r_thumb_x_f, button_dpad_up, button_dpad_up_f
     """
     Grab 1st available gamepad, logging changes to the screen.
     L & R analogue triggers set the vibration motor speed.
@@ -424,25 +433,43 @@ def handle_joystick(conn, addr, signal_list):
 
     @j.event
     def on_button(button, pressed):
-        global ctrl_map
-        logging.debug('button '+str(button)+': '+str(pressed))
-        for key in ctrl_map:
-            if ctrl_map[key][CTRL_JOYSTICK_FIELD] == button:
-                ctrl_map[key][CTRL_VALUE] = pressed
-                ctrl_map[key][CTRL_FLAG] = True
+        global button_1
+        global button_1_f
+        print('button', button, pressed)
+        if button == 13:
+            button_1 = "b1_"+str(pressed)
+            button_1_f = 1
+
 
     left_speed = 0
     right_speed = 0
 
     @j.event
     def on_axis(axis, value):
-        global ctrl_map
+        global r_trigger, l_trigger, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x, r_trigger_f, l_trigger_f, l_thumb_y_f, l_thumb_x_f, r_thumb_y_f, r_thumb_x_f
+        left_speed = 0
+        right_speed = 0
+        data = 0
 
-        logging.debug('axis '+str(axis)+': '+str(value))
-        for key in ctrl_map:
-            if ctrl_map[key][CTRL_JOYSTICK_FIELD] == axis:
-                ctrl_map[key][CTRL_VALUE] = value
-                ctrl_map[key][CTRL_FLAG] = True
+        print('axis', axis, value)
+        if axis == "l_thumb_y":
+            l_thumb_y = 'ly_' + str(value)
+            l_thumb_y_f = 1
+        if axis == "l_thumb_x":
+            l_thumb_x = 'lx_' + str(value)
+            l_thumb_x_f = 1
+        if axis == "r_thumb_y":
+            r_thumb_y = 'y_' + str(value)
+            r_thumb_y_f = 1
+        if axis == "r_thumb_x":
+            r_thumb_x = 'x_' + str(value)
+            r_thumb_x_f = 1
+        if axis == "left_trigger":
+            l_trigger = 'l_' + str(value)
+            l_trigger_f = 1
+        elif axis == "right_trigger":
+            r_trigger = 'r_' + str(value)
+            r_trigger_f = 1
         # j.set_vibration(left_speed, right_speed)
 
     try:
@@ -460,9 +487,10 @@ def handle_joystick(conn, addr, signal_list):
 
 
 def handle_socket(conn, addr, signal_list):
-    global ctrl_map
-    global state_map
-    prev_read = time.time()
+    global r_trigger, l_trigger, l_thumb_y, l_thumb_x, r_thumb_y, r_thumb_x
+    global r_trigger_f, l_trigger_f, l_thumb_y_f, l_thumb_x_f, r_thumb_y_f, r_thumb_x_f
+    global button_dpad_up
+    global button_dpad_up_f
     try:
         while(True):
             try:
@@ -472,34 +500,51 @@ def handle_socket(conn, addr, signal_list):
                 # if global state is updated
                 #     send update to pi
                 try:
-                    for key in ctrl_map:
-                        if ctrl_map[key][CTRL_FLAG]:
-                            ctrl_map[key][CTRL_FLAG] = False
-                            nwk_str_val = ctrl_map[key][CTRL_NETWORK_LABEL]+'_'+str(ctrl_map[key][CTRL_VALUE])
-                            print 'Sending Command: ' + nwk_str_val
-                            command_packet = Packet(TYPE_CMD_UPDATE, nwk_str_val)
-                            response = send_command(conn, command_packet)
-                            print 'Received Response: ', response
+                    if r_trigger_f:
+                        r_trigger_f = 0
+                        print 'Sending Command: ', r_trigger
+                        packet = Packet(TYPE_CMD_UPDATE, r_trigger)
+                        response = send_command(conn, packet)
+                        print 'Received Response: ', response
+                    if l_trigger_f:
+                        l_trigger_f = 0
+                        print 'Sending Command: ', l_trigger
+                        packet = Packet(TYPE_CMD_UPDATE, l_trigger)
+                        response = send_command(conn, packet)
+                        print 'Received Response: ', response
+                    if l_thumb_y_f:
+                        l_thumb_y_f = 0
+                        print 'Sending Command: ', l_thumb_y
+                        packet = Packet(TYPE_CMD_UPDATE, l_thumb_y)
+                        response = send_command(conn, packet)
+                        print 'Received Response: ', response
+                    if l_thumb_x_f:
+                        l_thumb_x_f = 0
+                        print 'Sending Command: ', l_thumb_x
+                        packet = Packet(TYPE_CMD_UPDATE, l_thumb_x)
+                        response = send_command(conn, packet)
+                        print 'Received Response: ', response
+                    if r_thumb_y_f:
+                        r_thumb_y_f = 0
+                        print 'Sending Command: ', r_thumb_y
+                        packet = Packet(TYPE_CMD_UPDATE, r_thumb_y)
+                        response = send_command(conn, packet)
+                        print 'Received Response: ', response
+                    if r_thumb_x_f:
+                        r_thumb_x_f = 0
+                        print 'Sending Command: ', r_thumb_x
+                        packet = Packet(TYPE_CMD_UPDATE, r_thumb_x)
+                        response = send_command(conn, packet)
+                        print 'Received Response: ', response
+                    if button_1_f:
+                        button_1_f = 0
+                        print 'Sending Command: ', button_1
+                        packet = Packet(TYPE_CMD_UPDATE, button_1)
+                        response = send_command(conn, packet)
+                        print 'Received Response: ', response
                 except PacketException:
-                    logging.warn("Invalid packet dropped")
-
-                try:
-                    # Read state of car
-                    time_diff = time.time() - prev_read
-                    if time_diff > REFRESH_INTERVAL:
-                        prev_read = time.time()
-                        command_packet = Packet(TYPE_CMD_READ, '')
-                        response = send_command(conn, command_packet)
-                        if response.type == TYPE_VALUE:
-                            state_map = json.loads(response.data)
-                            logging.debug('State Map: ' + str(response.data))
-                            if not DISABLE_UI_FLAG:
-                                app.main_screen.update_data(state_map)
-                        else:
-                            raise PacketException()
-                except PacketException:
-                    logging.warn("Invalid packet dropped")
-                # read sensor data from pi
+                    print("Invalid packet dropped")
+                # read sensor data from pi 
                 #response = send_command(conn,Packet(...))
                 #packet = Packet(TYPETOREQUESTDATA, WHICHSENSOR?)
                 #global variable = send_command(conn,Packet(REQUEST HERE)))
@@ -532,7 +577,7 @@ def run_server():
         #    [program, "udpsrc", "port=4200", "!", "gdpdepay", "!", "rtph264depay", "!", "avdec_h264",
         #     "!", "fpsdisplaysink", "sync=false", "text-overlay=false"], shell=True)
         proc = subprocess.Popen(
-            [VIDEO_STREAMING_PROGRAM, "udpsrc", "port=4200", "!", "h264parse", "!", "avdec_h264", "!", "textoverlay",
+            [program, "udpsrc", "port=4200", "!", "h264parse", "!", "avdec_h264", "!", "textoverlay",
              "text=quadberrypi",
              "!", "autovideosink", "sync=false", "text-overlay=false"], shell=True)
 
@@ -545,18 +590,10 @@ def run_server():
                 logging.info("Connection made on "+str(addr))
                 t1 = threading.Thread(name="handle_joystick_"+str(c_count), target=handle_joystick, args=(conn, addr, signal_list))
                 t2 = threading.Thread(name="handle_socket_"+str(c_count), target=handle_socket, args=(conn, addr, signal_list))
-                if not DISABLE_UI_FLAG:
-                    t3 = threading.Thread(target=app.run, args=())
-
                 t1.start()
                 t2.start()
-                if not DISABLE_UI_FLAG:
-                    t3.start()
-
                 threads.append(t1)
                 threads.append(t2)
-                if not DISABLE_UI_FLAG:
-                    threads.append(t3)
                 c_count = c_count + 1
                 #while(t1.is_alive() or t2.is_alive()):
                     #t1.join(5)
@@ -572,21 +609,12 @@ def run_server():
         proc.terminate()
         logging.info("Tidying up")
         signal_list[0] = True
-        if not DISABLE_UI_FLAG:
-            app.stop()
         for c_thread in threads:
             c_thread.join()
 
 
 if __name__ == "__main__":
-    for arg in sys.argv[1:]:
-        key, val = arg.split('=')
-        if key == 'LOG_LEVEL':
-            LOG_LEVEL = val
-        elif key == 'UI':
-            DISABLE_UI_FLAG = (val == '1')
-    if DISABLE_UI_FLAG:
-        coloredlogs.install(level=LOG_LEVEL, fmt='%(asctime)s %(hostname)s %(name)s[%(process)d] [%(threadName)s] %(levelname)s %(message)s')
+    coloredlogs.install(level='DEBUG', fmt='%(asctime)s %(hostname)s %(name)s[%(process)d] [%(threadName)s] %(levelname)s %(message)s')
     run_server()
     #sample_first_joystick()
     # determine_optimal_sample_rate()
