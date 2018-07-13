@@ -11,6 +11,8 @@ from kivy.uix.textinput import TextInput
 from kivy.uix.slider import Slider
 from kivy.uix.progressbar import ProgressBar
 from kivy.graphics import Color, Rectangle
+from kivy.clock import Clock, mainthread
+
 
 class SidePanel(GridLayout):
 
@@ -57,15 +59,15 @@ class MainScreen(BoxLayout):
         self.title_label = Label(text="Das Auto", bold=True, font_size=36)
         self.center_panel.add_widget(self.title_label)
 
-        self.left_panel.add_widget(Label(text='Target Throttle'))
-        self.fields['throttle_target'] = Label(text='0')
-        self.left_panel.add_widget(self.fields['throttle_target'])
+        self.left_panel.add_widget(Label(text='Remote Throttle'))
+        self.fields['throttle_remote'] = Label(text='0')
+        self.left_panel.add_widget(self.fields['throttle_remote'])
         self.left_panel.add_widget(Label(text='Current Throttle'))
         self.fields['throttle_current'] = Label(text='0')
         self.left_panel.add_widget(self.fields['throttle_current'])
-        self.left_panel.add_widget(Label(text='Target Brake'))
-        self.fields['brake_target'] = Label(text='0')
-        self.left_panel.add_widget(self.fields['brake_target'])
+        self.left_panel.add_widget(Label(text='Remote Brake'))
+        self.fields['brake_remote'] = Label(text='0')
+        self.left_panel.add_widget(self.fields['brake_remote'])
         self.left_panel.add_widget(Label(text='Current Brake'))
         self.fields['brake_current'] = Label(text='0')
         self.left_panel.add_widget(self.fields['brake_current'])
@@ -112,6 +114,7 @@ class MainScreen(BoxLayout):
         self.right_panel.add_widget(Label(text='Pitch'))
         self.fields['pitch'] = Label(text='0')
         self.right_panel.add_widget(self.fields['pitch'])
+        self.fields['imu_data'] = None
         # self.user_label.size_hint = (, 1)
         # self.add_widget()
         # self.add_widget(self.username)
@@ -119,7 +122,9 @@ class MainScreen(BoxLayout):
         # self.password = TextInput(password=True, multiline=False)
         # self.add_widget(self.password)
 
+    @mainthread
     def update_data(self, state_map):
+        logging.debug('Update UI Data...')
         for key in state_map:
             value = state_map[key]
             if key in self.fields:
@@ -130,15 +135,14 @@ class MainScreen(BoxLayout):
                         else 'R' if value == 'reverse'
                         else 'N')
                 elif key in ('head_lights', 'horn', 'other_lights'):
-                    #logging.info('head lights: '+repr(value))
                     self.fields[key].text = 'ON' if value == 1 else 'OFF'
                 elif key in ('indicator_mode', 'driving_mode'):
                     self.fields[key].text = value.upper()
                 elif key == 'imu_data':
                     heading, roll, pitch = value['reading']
-                    self.fields['heading'] = heading
-                    self.fields['roll'] = roll
-                    self.fields['pitch'] = pitch
+                    self.fields['heading'].text = str(heading)
+                    self.fields['roll'].text = str(roll)
+                    self.fields['pitch'].text = str(pitch)
                 else:
                     self.fields[key].text = str(value)
 

@@ -85,11 +85,12 @@ state_map = {
     'head_lights': 0,
     'indicator_mode': 'off',
     'steering_target': 0.0,     # Arduino analog input 1
-    'throttle_target': 0.0,     # Arduino analog input 2
+    'throttle_remote': 0.0,     # Arduino analog input 2
     'gear': 'park',             # Arduino serial bits 1 and 2 (MSB)
     'horn': 0,                  # Arduino serial bit 3
     'other_lights': 0,          # Arduino serial bit 4
-    'driving_mode': 'remote',   # Arduino serial bit 5
+    'driving_mode': 'remote',   # Arduino serial bit 5,
+    'brake_remote': 0.0,
     'stop_throttle': 0,
     'fr_rpm': 0.0,
     'fl_rpm': 0.0,
@@ -110,7 +111,7 @@ led_strip = apa102.APA102(num_led=144, global_brightness=20, mosi = 10, sclk = 1
                                   order='rgb', max_speed_hz=4000000)
 led_threads = [{'thread': None, 'stop_signal': 0}]
 
-ser = serial.Serial('/dev/ttyS0', 9600)
+ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 ser.flushInput()
 
 imu_module = imu.IMU()
@@ -232,7 +233,6 @@ class CarClient():
         except Exception, e:
             logging.error(e)
             self.shutdown()
-            raise e
         except KeyboardInterrupt:
             self.shutdown()
 
@@ -345,11 +345,11 @@ class CarClient():
 
         while stop_signal == 0:
             packet = read_packet(self.server_socket)
-            write_packet(self.server_socket, Packet(TYPE_ACK, ''))
             #logging.info('Received a packet.')
             data = packet.data
             type = packet.type
             if type == TYPE_CMD_UPDATE:
+                write_packet(self.server_socket, Packet(TYPE_ACK, ''))
                 for reading in data.split('\n'):
                     if reading != "":
                         id, value = reading.split("_")
@@ -361,6 +361,8 @@ class CarClient():
             elif type == TYPE_CMD_READ:
                 write_packet(self.server_socket, Packet(TYPE_VALUE, json.dumps(state_map)))
                 logging.debug('Processed READ Command')
+            else:
+                write_packet(self.server_socket, Packet(TYPE_ACK, ''))
 
 
 def handle_indicator_event(mode):
@@ -399,17 +401,21 @@ def run_arduino_thread():
     global ser
     ser.flushInput()
     while stop_signal == 0:
-        # Write to Arduino
-        steering_target = float((state_map['steering_target']+0.5)*1023)
-        throttle_target = float(state_map['throttle_target']*255)
-        byte_input = set_arduino_flags(state_map['gear'], state_map['horn'], state_map['other_lights'], state_map['driving_mode'])
-        arduino_serial.writeFrame(ser,steering_target, throttle_target, byte_input)
-        # Read from Arduino
-        steering, throttle, brake, custom_input = arduino_serial.readFrame(ser)
-        state_map['steering_current'] = float((steering * 1.0 / 1023) - 0.5)
-        state_map['throttle_current'] = float(throttle * 1.0 / 1023) if state_map['stop_throttle'] == 1 else 0.0
-        state_map['brake_current'] = float(brake * 1.0 / 1023)
-        state_map['custom_input'] = float(custom_input * 1.0 / 1023)
+        try:
+            # Write to Arduino
+            steering_target = float((state_map['steering_target']+0.5)*1023)
+            throttle_remote = float(state_map['throttle_remote']*1023)
+            byte_input = set_arduino_flags(state_map['gear'], state_map['horn'], state_map['other_lights'], state_map['driving_mode'])
+            arduino_serial.writeFrame(ser, steering_target, throttle_remote, byte_input)
+            # Read from Arduino
+            steering, throttle, brake, custom_input = arduino_serial.readFrame(ser)
+            state_map['steering_current'] = float((steering * 1.0 / 1023) - 0.5)
+            state_map['throttle_current'] = float(throttle * 1.0 / 1023) if state_map['stop_throttle'] == 0 else 0.0
+            state_map['brake_current'] = float(brake * 1.0 / 1023)
+            state_map['custom_input'] = float(custom_input * 1.0 / 1023)
+        except Exception, e:
+            logging.warning(e.message)
+            time.sleep(0.1)
 
 
 def run_controller_thread():
@@ -447,6 +453,7 @@ def run_controller_thread():
                         if key == 'l_trigger':
                             #make sure to prevent any throttling during braking
                             if not DISABLE_SERVO:
+                                state_map['brake_remote'] = value
                                 if value > STOP_THROTTLE_THRESHOLD:
                                     state_map['stop_throttle'] = 1
                                 else:
@@ -459,7 +466,7 @@ def run_controller_thread():
 
                         # Throttle Command
                         elif key == 'r_trigger':
-                            state_map['throttle_target'] = value
+                            state_map['throttle_remote'] = value
 
                         # Steering Command
                         elif key == 'l_thumb_x':

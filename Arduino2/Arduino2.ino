@@ -1,3 +1,5 @@
+#include <Adafruit_DotStar.h>
+
 double incomingByte;   // for incoming serial data
 String string = "Data: ";
 int a = 0;

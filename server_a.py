@@ -126,7 +126,7 @@ class MainScreen(BoxLayout):
                 elif key in ('indicator_mode', 'driving_mode'):
                     self.fields[key].text = value.upper()
                 elif key == 'imu_data':
-                    pass
+                    self.fields[key].text = value['reading_data']
                 else:
                     self.fields[key].text = str(value)
 

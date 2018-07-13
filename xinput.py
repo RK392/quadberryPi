@@ -21,7 +21,6 @@ import socket
 from operator import itemgetter, attrgetter
 from itertools import count, starmap
 from serialpacket import *
-import server_ui
 
 import errno
 from pyglet import event
@@ -42,8 +41,7 @@ REFRESH_INTERVAL = 0.25
 
 VIDEO_STREAMING_PROGRAM = "A:/gstreamer/1.0/x86_64/bin/gst-launch-1.0.exe"
 
-if not DISABLE_UI_FLAG:
-    app = server_ui.DashboardApp()
+app = None
 
 # 1 Dpad Up
 # 2 Dpad Down
@@ -452,7 +450,7 @@ def handle_joystick(conn, addr, signal_list):
             #logging.debug("Send Loop")
             #conn.send("")
             j.dispatch_events()
-            #time.sleep(.01)
+            time.sleep(.1)
     except Exception as e:
         logging.error(e)
     except KeyboardInterrupt:
@@ -462,6 +460,7 @@ def handle_joystick(conn, addr, signal_list):
 def handle_socket(conn, addr, signal_list):
     global ctrl_map
     global state_map
+    global app
     prev_read = time.time()
     try:
         while(True):
@@ -476,12 +475,15 @@ def handle_socket(conn, addr, signal_list):
                         if ctrl_map[key][CTRL_FLAG]:
                             ctrl_map[key][CTRL_FLAG] = False
                             nwk_str_val = ctrl_map[key][CTRL_NETWORK_LABEL]+'_'+str(ctrl_map[key][CTRL_VALUE])
-                            print 'Sending Command: ' + nwk_str_val
+                            logging.info('Sending Command: ' + nwk_str_val)
                             command_packet = Packet(TYPE_CMD_UPDATE, nwk_str_val)
                             response = send_command(conn, command_packet)
-                            print 'Received Response: ', response
-                except PacketException:
+                            #logging.info("Received:" + repr(response))
+                            if response.type != TYPE_ACK:
+                                raise PacketException("Invalid type: "+response.type)
+                except PacketException, e:
                     logging.warn("Invalid packet dropped")
+                    logging.warn(e)
 
                 try:
                     # Read state of car
@@ -490,15 +492,17 @@ def handle_socket(conn, addr, signal_list):
                         prev_read = time.time()
                         command_packet = Packet(TYPE_CMD_READ, '')
                         response = send_command(conn, command_packet)
+                        #logging.info("Received:" + repr(response))
                         if response.type == TYPE_VALUE:
                             state_map = json.loads(response.data)
                             logging.debug('State Map: ' + str(response.data))
-                            if not DISABLE_UI_FLAG:
+                            if not DISABLE_UI_FLAG and app.main_screen is not None:
                                 app.main_screen.update_data(state_map)
                         else:
-                            raise PacketException()
-                except PacketException:
+                            raise PacketException("Invalid type: "+response.type)
+                except PacketException, e:
                     logging.warn("Invalid packet dropped")
+                    logging.warn(e)
                 # read sensor data from pi
                 #response = send_command(conn,Packet(...))
                 #packet = Packet(TYPETOREQUESTDATA, WHICHSENSOR?)
@@ -517,9 +521,16 @@ def handle_socket(conn, addr, signal_list):
         logging.debug("Keyboard Interrupt")
 
 def run_server():
+    global app
+
     threads = []
     signal = False
     signal_list = [signal]
+
+    if not DISABLE_UI_FLAG:
+        import server_ui
+        app = server_ui.DashboardApp()
+
     try:
         HOST = ''                 # Symbolic name meaning all available interfaces
         PORT = 50008              # Arbitrary non-privileged port
@@ -547,11 +558,10 @@ def run_server():
                 t2 = threading.Thread(name="handle_socket_"+str(c_count), target=handle_socket, args=(conn, addr, signal_list))
                 if not DISABLE_UI_FLAG:
                     t3 = threading.Thread(target=app.run, args=())
-
+                    t3.start()
                 t1.start()
                 t2.start()
-                if not DISABLE_UI_FLAG:
-                    t3.start()
+
 
                 threads.append(t1)
                 threads.append(t2)
@@ -584,7 +594,7 @@ if __name__ == "__main__":
         if key == 'LOG_LEVEL':
             LOG_LEVEL = val
         elif key == 'UI':
-            DISABLE_UI_FLAG = (val == '1')
+            DISABLE_UI_FLAG = (val == '0')
     if DISABLE_UI_FLAG:
         coloredlogs.install(level=LOG_LEVEL, fmt='%(asctime)s %(hostname)s %(name)s[%(process)d] [%(threadName)s] %(levelname)s %(message)s')
     run_server()

@@ -2,22 +2,19 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8ecf2ad7-fd2e-4057-8dac-e7feef799d1f" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/Rad.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/RTIMULib.ini" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/clientp.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/imu.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/install_client.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/install_server.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/light_patterns.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mag" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements_client.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/requirements_server.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/server_ui.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/servo.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/xinputold.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/python.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/python.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml___jb_tmp___" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Arduino2/Arduino2.ino" beforeDir="false" afterPath="$PROJECT_DIR$/Arduino2/Arduino2.ino" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/RTIMULib.ini" beforeDir="false" afterPath="$PROJECT_DIR$/RTIMULib.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/arduino_serial.py" beforeDir="false" afterPath="$PROJECT_DIR$/arduino_serial.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client.py___jb_tmp___" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/serialpacket.py" beforeDir="false" afterPath="$PROJECT_DIR$/serialpacket.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/server_a.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server_ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/server_ui.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/xinput.py" beforeDir="false" afterPath="$PROJECT_DIR$/xinput.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -29,11 +26,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="client.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="client.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="8404">
-              <caret line="382" column="4" selection-start-line="382" selection-start-column="4" selection-end-line="382" selection-end-column="4" />
+            <state relative-caret-position="308">
+              <caret line="80" column="51" selection-start-line="80" selection-start-column="49" selection-end-line="80" selection-end-column="51" />
             </state>
           </provider>
         </entry>
@@ -41,17 +38,8 @@
       <file leaf-file-name="serialpacket.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/serialpacket.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1474">
-              <caret line="67" column="17" selection-start-line="67" selection-start-column="17" selection-end-line="67" selection-end-column="17" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="install_client.sh" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/install_client.sh">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="66">
-              <caret line="3" column="34" selection-start-line="3" selection-start-column="34" selection-end-line="3" selection-end-column="34" />
+            <state relative-caret-position="1386">
+              <caret line="63" column="4" selection-start-line="63" selection-start-column="4" selection-end-line="63" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -59,8 +47,8 @@
       <file leaf-file-name="server_ui.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/server_ui.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="258">
-              <caret line="153" column="21" selection-start-line="153" selection-start-column="21" selection-end-line="153" selection-end-column="21" />
+            <state relative-caret-position="2552">
+              <caret line="129" column="12" selection-start-line="129" selection-start-column="12" selection-end-line="129" selection-end-column="12" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
               </folding>
@@ -77,15 +65,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="requirements_server.txt" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/requirements_server.txt">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="154">
-              <caret line="7" selection-start-line="7" selection-end-line="7" />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="requirements_client.txt" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/requirements_client.txt">
           <provider selected="true" editor-type-id="text-editor">
@@ -98,8 +77,8 @@
       <file leaf-file-name="servo.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/servo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="25" column="25" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
+            <state relative-caret-position="396">
+              <caret line="23" selection-start-line="23" selection-end-line="23" />
               <folding>
                 <element signature="e#177#208#0" expanded="true" />
               </folding>
@@ -111,7 +90,7 @@
         <entry file="file://$PROJECT_DIR$/arduino_serial.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="726">
-              <caret line="35" column="95" selection-start-line="35" selection-start-column="95" selection-end-line="35" selection-end-column="95" />
+              <caret line="35" column="20" selection-start-line="35" selection-start-column="20" selection-end-line="35" selection-end-column="20" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
               </folding>
@@ -119,11 +98,29 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="xinput.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="runcolorcycle.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/APA102_Pi/runcolorcycle.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="176">
+              <caret line="9" column="27" selection-start-line="9" selection-start-column="27" selection-end-line="9" selection-end-column="27" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="runcolorcycle2.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/APA102_Pi/runcolorcycle2.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="792">
+              <caret line="37" selection-start-line="37" selection-end-line="37" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="xinput.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/xinput.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="634">
-              <caret line="45" column="16" lean-forward="true" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
+            <state relative-caret-position="1694">
+              <caret line="91" column="69" selection-start-line="91" selection-start-column="67" selection-end-line="91" selection-end-column="69" />
               <folding>
                 <element signature="e#463#476#0" expanded="true" />
               </folding>
@@ -142,36 +139,36 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>INTERVAL</find>
-      <find>arduino_</find>
-      <find>set_arduino_flags</find>
-      <find>update_da</find>
-      <find>per</find>
-      <find>\.run\(</find>
-      <find>server_socket</find>
-      <find>brake_current</find>
-      <find>serial_port</find>
-      <find>ser</find>
-      <find>.serial_port</find>
-      <find>state_map</find>
-      <find>state_map\['head_</find>
-      <find>RTIMULib</find>
-      <find>RTIMU</find>
-      <find>SETTINGS_FILE</find>
-      <find>imu</find>
-      <find>arduino</find>
-      <find>.run</find>
-      <find>initialize</find>
-      <find>IMU</find>
-      <find />
-      <find />
-      <find>run_network_thread</find>
-      <find>self.server_s</find>
-      <find>callback</find>
-      <find>server_a</find>
-      <find>wade</find>
-      <find>fade</find>
       <find>MyApp</find>
+      <find>arduino_serial</find>
+      <find>main</find>
+      <find>brake_</find>
+      <find>throttle_tar</find>
+      <find>invalid</find>
+      <find>DISABLE_UI</find>
+      <find>DISABLE_UI_FLAG</find>
+      <find>app</find>
+      <find>serial.s</find>
+      <find>serialpacket</find>
+      <find>writePack</find>
+      <find>update_data</find>
+      <find>sendcomm</find>
+      <find>read_packet</find>
+      <find>flush</find>
+      <find>py.c</find>
+      <find>python</find>
+      <find>stat</find>
+      <find>state_map</find>
+      <find>logging.info</find>
+      <find>logging.debug</find>
+      <find>invalid pa</find>
+      <find>writefr</find>
+      <find>arduino</find>
+      <find>28</find>
+      <find>throttle_current</find>
+      <find>prin</find>
+      <find>steering_target</find>
+      <find>driving_mode</find>
     </findStrings>
     <replaceStrings>
       <replace>\'$1\':</replace>
@@ -195,7 +192,6 @@
         <option value="$PROJECT_DIR$/../../../Programming - Copy/sync/python/client.py" />
         <option value="$PROJECT_DIR$/clientnew.py" />
         <option value="$PROJECT_DIR$/light_patterns.py" />
-        <option value="$PROJECT_DIR$/serialpacket.py" />
         <option value="$PROJECT_DIR$/servo.py" />
         <option value="$PROJECT_DIR$/install.sh" />
         <option value="$PROJECT_DIR$/requirements.txt" />
@@ -204,26 +200,28 @@
         <option value="$PROJECT_DIR$/requirements_client.txt" />
         <option value="$PROJECT_DIR$/server_a" />
         <option value="$PROJECT_DIR$/requirements_server.txt" />
-        <option value="$PROJECT_DIR$/server_a.py" />
-        <option value="$PROJECT_DIR$/arduino_serial.py" />
         <option value="$PROJECT_DIR$/imu.py" />
-        <option value="$PROJECT_DIR$/client.py" />
-        <option value="$PROJECT_DIR$/xinput.py" />
+        <option value="$PROJECT_DIR$/server_a.py" />
+        <option value="$PROJECT_DIR$/serialpacket.py" />
         <option value="$PROJECT_DIR$/server_ui.py" />
+        <option value="$PROJECT_DIR$/xinput.py" />
+        <option value="$PROJECT_DIR$/APA102_Pi/runcolorcycle2.py" />
+        <option value="$PROJECT_DIR$/arduino_serial.py" />
+        <option value="$PROJECT_DIR$/client.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
-    <option name="x" value="-8" />
-    <option name="y" value="-8" />
-    <option name="width" value="1936" />
-    <option name="height" value="1096" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-7" />
+    <option name="width" value="974" />
+    <option name="height" value="1026" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -240,14 +238,14 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Rad\Desktop\Programming\sync\python\APA102_Pi" />
       <recent name="C:\Users\Rad\Desktop\Programming\sync\python" />
     </key>
   </component>
@@ -320,40 +318,40 @@
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49833888" visible="true" weight="0.11011591" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.2635659" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32900432" />
+      <window_info active="true" anchor="bottom" id="Event Log" order="7" sideWeight="0.50106835" side_tool="true" visible="true" weight="0.39534885" />
       <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="Python Console" order="8" />
-      <window_info anchor="bottom" id="Run" order="2" />
+      <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947312" weight="0.32890365" />
       <window_info id="Structure" order="1" sideWeight="0.5016611" side_tool="true" weight="0.11011591" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Debug" order="3" sideWeight="0.49893162" weight="0.40380314" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Find" order="1" sideWeight="0.49947312" weight="0.32890365" />
     </layout>
     <layout-to-restore>
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49833888" visible="true" weight="0.11011591" />
       <window_info id="Structure" order="1" sideWeight="0.5016611" side_tool="true" weight="0.11011591" />
       <window_info anchor="right" id="Commander" order="0" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="Run" order="2" />
-      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.32900432" />
+      <window_info anchor="bottom" id="Python Console" order="8" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Terminal" order="9" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" weight="0.32890365" />
-      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Version Control" order="10" />
+      <window_info anchor="bottom" id="Message" order="0" />
       <window_info id="Favorites" order="2" side_tool="true" />
-      <window_info anchor="bottom" id="Find" order="1" visible="true" weight="0.32900432" />
-      <window_info anchor="bottom" id="Python Console" order="8" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -361,20 +359,45 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="6" />
+      <option name="time" value="16" />
     </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="state_map['imu_data']['reading']" language="Python" />
+        <watch expression="app.main_screen = server_ui.MainScreen()" language="Python" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="watch">
+      <expression>
+        <expression-string>app.main_screen = server_ui.MainScreen()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>app.main_screen = server_ui.MainScreen</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>import server_ui</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>state_map['imu_data']['reading']</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>state_map['imu_data']</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/serverpackettest.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/clientpackettest.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="20" selection-start-line="20" selection-end-line="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/xinput.py">
       <provider selected="true" editor-type-id="text-editor">
         <state>
@@ -536,13 +559,6 @@
         <state relative-caret-position="-968" />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/APA102_Pi/runcolorcycle.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="27" selection-start-line="9" selection-start-column="27" selection-end-line="9" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/APA102_Pi/colorschemes.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="326">
@@ -601,13 +617,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/client.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="8404">
-          <caret line="382" column="4" selection-start-line="382" selection-start-column="4" selection-end-line="382" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/install_client.sh">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="66">
@@ -615,37 +624,27 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/serialpacket.py">
+    <entry file="file://$PROJECT_DIR$/requirements_client.txt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1474">
-          <caret line="67" column="17" selection-start-line="67" selection-start-column="17" selection-end-line="67" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/arduino_serial.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="726">
-          <caret line="35" column="95" selection-start-line="35" selection-start-column="95" selection-end-line="35" selection-end-column="95" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="22">
+          <caret line="1" column="11" selection-start-line="1" selection-start-column="11" selection-end-line="1" selection-end-column="11" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/servo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="25" column="25" selection-start-line="25" selection-start-column="25" selection-end-line="25" selection-end-column="25" />
+        <state relative-caret-position="396">
+          <caret line="23" selection-start-line="23" selection-end-line="23" />
           <folding>
             <element signature="e#177#208#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/requirements_client.txt">
+    <entry file="file://$PROJECT_DIR$/server_a.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="22">
-          <caret line="1" column="11" selection-start-line="1" selection-start-column="11" selection-end-line="1" selection-end-column="11" />
+        <state relative-caret-position="-435">
+          <caret line="123" column="33" selection-start-line="123" selection-start-column="21" selection-end-line="123" selection-end-column="33" />
         </state>
       </provider>
     </entry>
@@ -658,21 +657,59 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/server_ui.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="258">
-          <caret line="153" column="21" selection-start-line="153" selection-start-column="21" selection-end-line="153" selection-end-column="21" />
+        <state relative-caret-position="2552">
+          <caret line="129" column="12" selection-start-line="129" selection-start-column="12" selection-end-line="129" selection-end-column="12" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/APA102_Pi/runcolorcycle.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="176">
+          <caret line="9" column="27" selection-start-line="9" selection-start-column="27" selection-end-line="9" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/APA102_Pi/runcolorcycle2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="792">
+          <caret line="37" selection-start-line="37" selection-end-line="37" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/xinput.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="634">
-          <caret line="45" column="16" lean-forward="true" selection-start-line="45" selection-start-column="16" selection-end-line="45" selection-end-column="16" />
+        <state relative-caret-position="1694">
+          <caret line="91" column="69" selection-start-line="91" selection-start-column="67" selection-end-line="91" selection-end-column="69" />
           <folding>
             <element signature="e#463#476#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/arduino_serial.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="726">
+          <caret line="35" column="20" selection-start-line="35" selection-start-column="20" selection-end-line="35" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/serialpacket.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1386">
+          <caret line="63" column="4" selection-start-line="63" selection-start-column="4" selection-end-line="63" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/client.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="80" column="51" selection-start-line="80" selection-start-column="49" selection-end-line="80" selection-end-column="51" />
         </state>
       </provider>
     </entry>

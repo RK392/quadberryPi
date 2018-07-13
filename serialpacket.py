@@ -16,7 +16,11 @@ TYPE_VALUE = 'val'
 
 TYPE_ERR = 'err'
 
-class PacketException(Exception): pass
+
+class PacketException(Exception):
+
+    def __init__(self, message):
+        super(PacketException, self).__init__(message)
 
 
 # noinspection PyTypeChecker
