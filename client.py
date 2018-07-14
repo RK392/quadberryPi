@@ -1,30 +1,23 @@
 import sys
-
-sys.path.insert(0, './APA102_Pi')
-
 import socket
 import time
 import pigpio
 import os
-#import PID
 from threading import Thread
 import subprocess
 import serial
-import light_patterns
-from serialpacket import *
-import servo
-from imu import IMU
 import logging
 import coloredlogs
-import apa102
-import arduino_serial
 import json
-import imu
+
 import Adafruit_PCA9685
 
-#imu = IMU()
-#imu.initialize()
-#thread.start(imu.run)
+from SC.util.control import *
+from SC.light import light_patterns, apa102
+from SC.net.serialpacket import *
+from SC.servo import servo
+from SC.arduino import arduino_serial
+from SC.imu import imu
 
 LOG_LEVEL = 'INFO'
 STOP_THROTTLE_THRESHOLD = 0.05
@@ -32,75 +25,42 @@ STOP_THROTTLE_THRESHOLD = 0.05
 PWM_I2C_ADDRESS = 0x40
 PWM_FREQUENCY = 50
 
-DISABLE_SERVO = False
-
-CTRL_FLAG = 'flag'
-CTRL_JOYSTICK_FIELD = 'joystick_field'
-CTRL_NETWORK_LABEL = 'nw_label'
-CTRL_VALUE = 'value'
-
-CTRL_PIN = 'pin'
-
+DISABLE_SERVO = True
 
 # Controller values
-ctrl_map = {
-    'r_trigger': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 'right_trigger', CTRL_NETWORK_LABEL: 'r'},
-    'l_trigger': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 'left_trigger', CTRL_NETWORK_LABEL: 'l'},
-    'l_thumb_y': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 'l_thumb_y', CTRL_NETWORK_LABEL: 'ly'},
-    'l_thumb_x': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 'l_thumb_x', CTRL_NETWORK_LABEL: 'lx'},
-    'r_thumb_y': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 'r_thumb_y', CTRL_NETWORK_LABEL: 'y'},
-    'r_thumb_x': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 'r_thumb_x', CTRL_NETWORK_LABEL: 'x'},
-
-    'button_dpad_up': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 1, CTRL_NETWORK_LABEL: 'bdu'},
-    'button_dpad_down': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 2, CTRL_NETWORK_LABEL: 'bdd'},
-    'button_dpad_left': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 3, CTRL_NETWORK_LABEL: 'bdl'},
-    'button_dpad_right': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 4, CTRL_NETWORK_LABEL: 'bdr'},
-
-    'button_a':  {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 13, CTRL_NETWORK_LABEL: 'ba'},
-    'button_b':  {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 14, CTRL_NETWORK_LABEL: 'bb'},
-    'button_x':  {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 15, CTRL_NETWORK_LABEL: 'bx'},
-    'button_y':  {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 16, CTRL_NETWORK_LABEL: 'by'},
-
-    'button_l1': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 9, CTRL_NETWORK_LABEL: 'bl1'},
-    'button_r1': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 10, CTRL_NETWORK_LABEL: 'br1'},
-    'button_l3': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 7, CTRL_NETWORK_LABEL: 'bl3'},
-    'button_r3': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 8, CTRL_NETWORK_LABEL: 'br3'},
-
-    'button_start': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 5, CTRL_NETWORK_LABEL: 'bstart'},
-    'button_back': {CTRL_FLAG: False, CTRL_JOYSTICK_FIELD: 6, CTRL_NETWORK_LABEL: 'bback'}
-}
+ctrl_map = generate_control_map()
 
 local_ctrl_map = {
-    'drive_gear': {CTRL_FLAG: False, CTRL_PIN: 18},
-    'reverse_gear': {CTRL_FLAG: False, CTRL_PIN: 23},
-    'park_gear': {CTRL_FLAG: False, CTRL_PIN: 24},
-    'right_indicator': {CTRL_FLAG: False, CTRL_PIN: 25},
-    'left_indicator': {CTRL_FLAG: False, CTRL_PIN: 7},
-    'horn': {CTRL_FLAG: False, CTRL_PIN: 12},
-    'other_lights': {CTRL_FLAG: False, CTRL_PIN: 16},
-    'remote_drive': {CTRL_FLAG: False, CTRL_PIN: 20}
+    LINPUT_DRIVE_GEAR: {CTRL_FLAG: False, CTRL_PIN: 18},
+    LINPUT_REVERSE_GEAR: {CTRL_FLAG: False, CTRL_PIN: 23},
+    LINPUT_PARK_GEAR: {CTRL_FLAG: False, CTRL_PIN: 24},
+    LINPUT_RIGHT_INDICATOR: {CTRL_FLAG: False, CTRL_PIN: 25},
+    LINPUT_LEFT_INDICATOR: {CTRL_FLAG: False, CTRL_PIN: 7},
+    LINPUT_HORN: {CTRL_FLAG: False, CTRL_PIN: 12},
+    LINPUT_OTHER_LIGHTS: {CTRL_FLAG: False, CTRL_PIN: 16},
+    LINPUT_REMOTE_DRIVE: {CTRL_FLAG: False, CTRL_PIN: 20}
 }
 
 state_map = {
-    'head_lights': 0,
-    'indicator_mode': 'off',
-    'steering_target': 0.0,     # Arduino analog input 1
-    'throttle_remote': 0.0,     # Arduino analog input 2
-    'gear': 'park',             # Arduino serial bits 1 and 2 (MSB)
-    'horn': 0,                  # Arduino serial bit 3
-    'other_lights': 0,          # Arduino serial bit 4
-    'driving_mode': 'remote',   # Arduino serial bit 5,
-    'brake_remote': 0.0,
-    'stop_throttle': 0,
-    'fr_rpm': 0.0,
-    'fl_rpm': 0.0,
-    'rr_rpm': 0.0,
-    'rl_rpm': 0.0,
+    STATE_HEAD_LIGHTS: 0,
+    STATE_INDICATOR_MODE: INDICATOR_STATE_OFF,
+    STATE_STEERING_TARGET: 0.0,     # Arduino analog input 1
+    STATE_THROTTLE_REMOTE: 0.0,     # Arduino analog input 2
+    STATE_GEAR: GEAR_PARK,             # Arduino serial bits 1 and 2 (MSB)
+    STATE_HORN: 0,                  # Arduino serial bit 3
+    STATE_OTHER_LIGHTS: 0,          # Arduino serial bit 4
+    STATE_DRIVING_MODE: DRIVING_MODE_REMOTE,   # Arduino serial bit 5,
+    STATE_BRAKE_REMOTE: 0.0,
+    STATE_STOP_THROTTLE: 0,
+    STATE_FRONT_RIGHT_RPM: 0.0,
+    STATE_FRONT_LEFT_RPM: 0.0,
+    STATE_REAR_RIGHT_RPM: 0.0,
+    STATE_REAR_LEFT_RPM: 0.0,
     # Arduino analog outputs
-    'steering_current': 0.0,
-    'throttle_current': 0.0,
-    'brake_current': 0.0,
-    'imu_data': None
+    STATE_STEERING_CURRENT: 0.0,
+    STATE_THROTTLE_CURRENT: 0.0,
+    STATE_BRAKE_CURRENT: 0.0,
+    STATE_IMU_DATA: None
 }
 
 # Thread stop signal
@@ -109,6 +69,7 @@ stop_signal = 0
 # Initialize the library and the strip
 led_strip = apa102.APA102(num_led=144, global_brightness=20, mosi = 10, sclk = 11,
                                   order='rgb', max_speed_hz=4000000)
+
 led_threads = [{'thread': None, 'stop_signal': 0}]
 
 ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
@@ -119,8 +80,9 @@ imu_module = imu.IMU()
 if not DISABLE_SERVO:
     # Initialise the PCA9685 using the default address (0x40).
     pwm = Adafruit_PCA9685.PCA9685(PWM_I2C_ADDRESS)
-    # Set frequency to 60hz, good for servos.
+    # Set frequency to 50hz, good for servos.
     pwm.set_pwm_freq(PWM_FREQUENCY)
+
 
 class CarClient():
     def __init__(self):
@@ -129,10 +91,10 @@ class CarClient():
         self.ALT0_PINS = []
 
         self.RPM_MAP = {
-            5: 'fr_rpm',
-            6: 'fl_rpm',
-            13: 'rr_rpm',
-            19: 'rl_rpm'
+            5: STATE_FRONT_RIGHT_RPM,
+            6: STATE_FRONT_LEFT_RPM,
+            13: STATE_REAR_RIGHT_RPM,
+            19: STATE_REAR_LEFT_RPM
         }
 
         self.pi = pigpio.pi()
@@ -162,7 +124,7 @@ class CarClient():
 
         # Network Variables
         self.server_socket = None
-        self.server_host = '192.168.1.66'  # The remote host
+        self.server_host = '192.168.1.75'  # The remote host
         self.server_port = 50008  # The same port as used by the server
 
         # Video Streaming Variables
@@ -213,7 +175,7 @@ class CarClient():
         #   os.system('raspivid -t 0 -h 1080 -w 1920 -fps 30 -hf -vf -b 2000000 -o udp://192.168.1.71:4200')
 
         # Video Streaming Setup
-        #TODO: FIX H264 STREAaMING
+        #TODO: FIX H264 STREAMING
         #self.video_process = subprocess.Popen(['raspivid -t 0 -h 1080 -w 1920 -fps 30 -hf -vf -b 10000000 -o -'
         #                                       ' |  gst-launch-1.0 fdsrc ! h264parse ! rtph264pay config-interval=1 pt=96 ! gdppay'
         #                                       ' ! udpsink host='+self.server_host+' port='+str(self.video_port)], shell=True)
@@ -303,38 +265,38 @@ class CarClient():
                 local_ctrl_map[key][CTRL_VALUE] = level
                 local_ctrl_map[key][CTRL_FLAG] = 1
                 logging.debug(key + ' value updated to '+str(level)+' from source: '+str(pin))
-                if key == 'remote_drive':
-                    state_map['driving_mode'] = 'local' if level == 0 else 'remote'
+                if key == LINPUT_REMOTE_DRIVE:
+                    state_map[STATE_DRIVING_MODE] = DRIVING_MODE_LOCAL if level == 0 else DRIVING_MODE_REMOTE
                 else:
-                    if state_map['driving_mode'] == 'local':
-                        if key == 'drive_gear':
-                            state_map['gear'] = 'drive' if level == 1 else 'neutral'
+                    if state_map[STATE_DRIVING_MODE] == DRIVING_MODE_LOCAL:
+                        if key == LINPUT_DRIVE_GEAR:
+                            state_map[STATE_GEAR] = GEAR_DRIVE if level == 1 else GEAR_NEUTRAL
                             if level == 1:
                                 logging.info('Setting Gear to Drive')
                             else:
                                 logging.info('Setting Gear to Neutral')
-                        elif key == 'reverse_gear':
-                            state_map['gear'] = 'reverse' if level == 1 else 'neutral'
+                        elif key == LINPUT_REVERSE_GEAR:
+                            state_map[STATE_GEAR] = GEAR_REVERSE if level == 1 else GEAR_NEUTRAL
                             if level == 1:
                                 logging.info('Setting Gear to Reverse')
                             else:
                                 logging.info('Setting Gear to Neutral')
-                        elif key == 'park_gear':
-                            state_map['gear'] = 'park' if level == 1 else 'neutral'
+                        elif key == LINPUT_PARK_GEAR:
+                            state_map[STATE_GEAR] = GEAR_PARK if level == 1 else GEAR_NEUTRAL
                             if level == 1:
                                 logging.info('Setting Gear to Park')
                             else:
                                 logging.info('Setting Gear to Neutral')
-                        elif key == 'right_indicator':
+                        elif key == LINPUT_RIGHT_INDICATOR:
                             logging.info('Toggling Right Indicator')
-                            handle_indicator_event('right')
-                        elif key == 'left_indicator':
+                            handle_indicator_event(INDICATOR_STATE_RIGHT)
+                        elif key == LINPUT_LEFT_INDICATOR:
                             logging.info('Toggling Left Indicator')
-                            handle_indicator_event('left')
-                    if key == 'other_lights':
-                        state_map['other_lights'] = int(level)
-                    if key == 'horn':
-                        state_map['horn'] = int(level)
+                            handle_indicator_event(INDICATOR_STATE_LEFT)
+                    if key == LINPUT_OTHER_LIGHTS:
+                        state_map[STATE_OTHER_LIGHTS] = int(level)
+                    if key == LINPUT_HORN:
+                        state_map[STATE_HORN] = int(level)
 
     def run_network_thread(self):
         global ctrl_map
@@ -368,11 +330,11 @@ class CarClient():
 def handle_indicator_event(mode):
     global led_strip
     global led_threads
-    state_map['indicator_mode'] = mode if state_map['indicator_mode'] != mode else 'off'
+    state_map[STATE_INDICATOR_MODE] = mode if state_map[STATE_INDICATOR_MODE] != mode else INDICATOR_STATE_OFF
     led_threads[0]['stop_signal'] = 1
     led_threads.pop(0)
     led_threads.append({'stop_signal': 0})
-    if state_map['indicator_mode'] == mode:
+    if state_map[STATE_INDICATOR_MODE] == mode:
         logging.info(mode+': ON')
         led_threads[0]['thread'] = Thread(target=light_patterns.indicator_lights,
                                           args=(led_strip, mode, 'single', led_threads[0]))
@@ -381,16 +343,16 @@ def handle_indicator_event(mode):
 
 def imu_callback(data):
     global state_map
-    state_map['imu_data'] = data
+    state_map[STATE_IMU_DATA] = data
     logging.debug('IMU Data:' + str(data))
     time.sleep(0.25)
 
 
 def set_arduino_flags(gear, horn, other_lights, driving_mode):
-    reverse_flags = (0b11 if gear == 'reverse' else 0) << 6
+    reverse_flags = (0b11 if gear == GEAR_REVERSE else 0) << 6
     horn_flag = (0b1 if horn == 1 else 0) << 5
     other_lights_flag = (0b1 if other_lights == 1 else 0) << 4
-    driving_mode_flag = (0b1 if driving_mode == 'remote' else 0) << 3
+    driving_mode_flag = (0b1 if driving_mode == DRIVING_MODE_REMOTE else 0) << 3
     byte_input = reverse_flags | horn_flag | other_lights_flag | driving_mode_flag
     return byte_input
 
@@ -403,16 +365,16 @@ def run_arduino_thread():
     while stop_signal == 0:
         try:
             # Write to Arduino
-            steering_target = float((state_map['steering_target']+0.5)*1023)
-            throttle_remote = float(state_map['throttle_remote']*1023)
-            byte_input = set_arduino_flags(state_map['gear'], state_map['horn'], state_map['other_lights'], state_map['driving_mode'])
+            steering_target = float((state_map[STATE_STEERING_TARGET]+0.5)*1023)
+            throttle_remote = float(state_map[STATE_THROTTLE_REMOTE]*1023)
+            byte_input = set_arduino_flags(state_map[STATE_GEAR], state_map[STATE_HORN], state_map[STATE_OTHER_LIGHTS], state_map[STATE_DRIVING_MODE])
             arduino_serial.writeFrame(ser, steering_target, throttle_remote, byte_input)
             # Read from Arduino
             steering, throttle, brake, custom_input = arduino_serial.readFrame(ser)
-            state_map['steering_current'] = float((steering * 1.0 / 1023) - 0.5)
-            state_map['throttle_current'] = float(throttle * 1.0 / 1023) if state_map['stop_throttle'] == 0 else 0.0
-            state_map['brake_current'] = float(brake * 1.0 / 1023)
-            state_map['custom_input'] = float(custom_input * 1.0 / 1023)
+            state_map[STATE_STEERING_CURRENT] = float((steering * 1.0 / 1023) - 0.5)
+            state_map[STATE_THROTTLE_CURRENT] = float(throttle * 1.0 / 1023) if state_map[STATE_STOP_THROTTLE] == 0 else 0.0
+            state_map[STATE_BRAKE_CURRENT] = float(brake * 1.0 / 1023)
+            state_map[STATE_CUSTOM_INPUT] = float(custom_input * 1.0 / 1023)
         except Exception, e:
             logging.warning(e.message)
             time.sleep(0.1)
@@ -436,108 +398,108 @@ def run_controller_thread():
                     value = ctrl_map[key][CTRL_VALUE]
 
                     # Camera Pan Servo
-                    if key == 'r_thumb_x':
+                    if key == CTRL_R_THUMB_X:
                         if not DISABLE_SERVO:
                             servo_value = int((-value*204)+307)
                             servo.set_servo_pulse(pwm, 5, int(servo_value))
 
                     # Camera Tilt Servo
-                    elif key == 'r_thumb_y':
+                    elif key == CTRL_R_THUMB_Y:
                         if not DISABLE_SERVO:
                             servo_value = int((-value*204)+307)
                             servo.set_servo_pulse(pwm, 4, int(servo_value))
 
-                    if state_map['driving_mode'] == 'remote':
+                    if state_map[STATE_DRIVING_MODE] == DRIVING_MODE_REMOTE:
 
                         # Brake Command
-                        if key == 'l_trigger':
+                        if key == CTRL_L_TRIGGER:
                             #make sure to prevent any throttling during braking
                             if not DISABLE_SERVO:
-                                state_map['brake_remote'] = value
+                                state_map[STATE_BRAKE_REMOTE] = value
                                 if value > STOP_THROTTLE_THRESHOLD:
-                                    state_map['stop_throttle'] = 1
+                                    state_map[STATE_STOP_THROTTLE] = 1
                                 else:
-                                    state_map['stop_throttle'] = 0
+                                    state_map[STATE_STOP_THROTTLE] = 0
                                 servo_value = int((value * 204) + 307)
                                 servo.set_servo_pulse(pwm, 0, servo_value)
                                 servo.set_servo_pulse(pwm, 1, servo_value)
-                                servo.set_servo_pulse(pwm, 2, int(servo_value*0.8))
-                                servo.set_servo_pulse(pwm, 3, int(servo_value*0.8))
+                                servo.set_servo_pulse(pwm, 2, int(servo_value * 0.8))
+                                servo.set_servo_pulse(pwm, 3, int(servo_value * 0.8))
 
                         # Throttle Command
-                        elif key == 'r_trigger':
-                            state_map['throttle_remote'] = value
+                        elif key == CTRL_R_TRIGGER:
+                            state_map[STATE_THROTTLE_REMOTE] = value
 
                         # Steering Command
-                        elif key == 'l_thumb_x':
-                            state_map['steering_target'] = value
+                        elif key == CTRL_R_THUMB_X:
+                            state_map[STATE_STEERING_TARGET] = value
 
                         # Headlights on
-                        elif key == 'button_y':
+                        elif key == CTRL_BUTTON_Y:
                             if value == 1:
                                 logging.info('Toggling Headlights')
-                                state_map['head_lights'] = int(1 - state_map['head_lights'])
-                                logging.info('Head Lights ' + ('on' if state_map['head_lights'] == 1 else 'off') + '.')
-                                light_patterns.head_lights(led_strip, state_map['head_lights'])
+                                state_map[STATE_HEAD_LIGHTS] = int(1 - state_map[STATE_HEAD_LIGHTS])
+                                logging.info('Head Lights ' + ('on' if state_map[STATE_HEAD_LIGHTS] == 1 else 'off') + '.')
+                                light_patterns.head_lights(led_strip, state_map[STATE_HEAD_LIGHTS])
 
                         # Other Lights on
-                        elif key == 'button_b':
+                        elif key == CTRL_BUTTON_B:
                             if value == 1:
                                 logging.info('Toggling Other Lights')
-                                state_map['other_lights'] = int(1 - state_map['other_lights'])
-                                logging.info('Other Lights ' + ('on' if state_map['other_lights'] == 1 else 'off') + '.')
-                                light_patterns.head_lights(led_strip, state_map['other_lights'])
+                                state_map[STATE_OTHER_LIGHTS] = int(1 - state_map[STATE_OTHER_LIGHTS])
+                                logging.info('Other Lights ' + ('on' if state_map[STATE_OTHER_LIGHTS] == 1 else 'off') + '.')
+                                light_patterns.head_lights(led_strip, state_map[STATE_OTHER_LIGHTS])
 
                         # Horn (Hold)
-                        elif key == 'button_x':
-                            state_map['horn'] = value
-                            logging.info('Horn ' + ('on' if state_map['horn'] == 1 else 'off') + '.')
+                        elif key == CTRL_BUTTON_X:
+                            state_map[STATE_HORN] = value
+                            logging.info('Horn ' + ('on' if state_map[STATE_HORN] == 1 else 'off') + '.')
 
                         # Park Gear
-                        elif key == 'button_dpad_left':
+                        elif key == CTRL_BUTTON_DPAD_LEFT:
                             if value == 1:
                                 logging.info('Setting Gear to Park')
-                                state_map['gear'] = 'park'
+                                state_map[STATE_GEAR] = GEAR_PARK
                                 light_patterns.reverse_lights(led_strip, 0)
 
                         # Neutral Gear
-                        elif key == 'button_dpad_right':
+                        elif key == CTRL_BUTTON_DPAD_RIGHT:
                             if value == 1:
                                 logging.info('Setting Gear to Neutral')
-                                state_map['gear'] = 'neutral'
+                                state_map[STATE_GEAR] = GEAR_NEUTRAL
                                 light_patterns.reverse_lights(led_strip, 0)
 
                         # Drive Gear
-                        elif key == 'button_dpad_up':
+                        elif key == CTRL_BUTTON_DPAD_UP:
                             if value == 1:
                                 logging.info('Setting Gear to Drive')
-                                state_map['gear'] = 'drive'
+                                state_map[STATE_GEAR] = GEAR_DRIVE
                                 light_patterns.reverse_lights(led_strip, 0)
 
                         # Reverse Gear
-                        elif key == 'button_dpad_down':
+                        elif key == CTRL_BUTTON_DPAD_DOWN:
                             if value == 1:
                                 logging.info('Setting Gear to Reverse')
-                                state_map['gear'] = 'reverse'
+                                state_map[STATE_GEAR] = GEAR_REVERSE
                                 light_patterns.reverse_lights(led_strip, 1)
 
                         #TODO: Detect hold mode (or not)
                         # Left Indicator Button Input
-                        elif key == 'button_l1':
+                        elif key == CTRL_BUTTON_L1:
                             if value == 1:
                                 logging.info('Toggling Left Indicator')
-                                handle_indicator_event('left')
+                                handle_indicator_event(INDICATOR_STATE_LEFT)
                         # Right Indicator Button Input
-                        elif key == 'button_r1':
+                        elif key == CTRL_BUTTON_R1:
                             if value == 1:
                                 logging.info('Toggling Right Indicator')
-                                handle_indicator_event('right')
+                                handle_indicator_event(INDICATOR_STATE_RIGHT)
 
                         # Warn Indicator Button Input
-                        elif key == 'button_back':
+                        elif key == CTRL_BUTTON_BACK:
                             if value == 1:
                                 logging.info('Toggling Warn Indicator')
-                                handle_indicator_event('warn')
+                                handle_indicator_event(INDICATOR_STATE_WARN)
                         else:
                             pass
 
@@ -553,10 +515,8 @@ if __name__ == "__main__":
         key, val = arg.split('=')
         if key == 'LOG_LEVEL':
             LOG_LEVEL = val
+
     coloredlogs.install(level=LOG_LEVEL, fmt='%(asctime)s %(hostname)s %(name)s[%(process)d] [%(threadName)s] %(levelname)s %(message)s')
     client = CarClient()
     client.initialize()
     client.run()
-    #imu_module.initialize()
-    #imu_module.register_callback(imu_callback)
-    #imu_module.run()
