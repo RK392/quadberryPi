@@ -12,7 +12,7 @@ import json
 
 import Adafruit_PCA9685
 
-from SC.util.control import *
+from SC.util.common import *
 from SC.light import light_patterns, apa102
 from SC.net.serialpacket import *
 from SC.servo import servo
@@ -41,27 +41,17 @@ local_ctrl_map = {
     LINPUT_REMOTE_DRIVE: {CTRL_FLAG: False, CTRL_PIN: 20}
 }
 
-state_map = {
-    STATE_HEAD_LIGHTS: 0,
-    STATE_INDICATOR_MODE: INDICATOR_STATE_OFF,
-    STATE_STEERING_TARGET: 0.0,     # Arduino analog input 1
-    STATE_THROTTLE_REMOTE: 0.0,     # Arduino analog input 2
-    STATE_GEAR: GEAR_PARK,             # Arduino serial bits 1 and 2 (MSB)
-    STATE_HORN: 0,                  # Arduino serial bit 3
-    STATE_OTHER_LIGHTS: 0,          # Arduino serial bit 4
-    STATE_DRIVING_MODE: DRIVING_MODE_REMOTE,   # Arduino serial bit 5,
-    STATE_BRAKE_REMOTE: 0.0,
-    STATE_STOP_THROTTLE: 0,
-    STATE_FRONT_RIGHT_RPM: 0.0,
-    STATE_FRONT_LEFT_RPM: 0.0,
-    STATE_REAR_RIGHT_RPM: 0.0,
-    STATE_REAR_LEFT_RPM: 0.0,
-    # Arduino analog outputs
-    STATE_STEERING_CURRENT: 0.0,
-    STATE_THROTTLE_CURRENT: 0.0,
-    STATE_BRAKE_CURRENT: 0.0,
-    STATE_IMU_DATA: None
+# Servo initialization parameters
+servo_init_map = {
+    SERVO_PIN_RL: 307,
+    SERVO_PIN_RR: 307,
+    SERVO_PIN_FL: 307,
+    SERVO_PIN_FR: 307,
+    SERVO_PIN_CAM_Y: 307,
+    SERVO_PIN_CAM_X: 307
 }
+
+state_map = generate_state_map()
 
 # Thread stop signal
 stop_signal = 0
@@ -82,7 +72,9 @@ if not DISABLE_SERVO:
     pwm = Adafruit_PCA9685.PCA9685(PWM_I2C_ADDRESS)
     # Set frequency to 50hz, good for servos.
     pwm.set_pwm_freq(PWM_FREQUENCY)
-
+    # Initialize servo to starting position
+    for key in servo_init_map:
+        servo.set_servo_pulse(pwm, key, servo_init_map[key])
 
 class CarClient():
     def __init__(self):
@@ -343,7 +335,10 @@ def handle_indicator_event(mode):
 
 def imu_callback(data):
     global state_map
-    state_map[STATE_IMU_DATA] = data
+    reading = data['reading']
+    state_map[STATE_IMU_READING_HEADING] = reading[0]
+    state_map[STATE_IMU_READING_ROLL] = reading[1]
+    state_map[STATE_IMU_READING_PITCH] = reading[2]
     logging.debug('IMU Data:' + str(data))
     time.sleep(0.25)
 
@@ -401,13 +396,13 @@ def run_controller_thread():
                     if key == CTRL_R_THUMB_X:
                         if not DISABLE_SERVO:
                             servo_value = int((-value*204)+307)
-                            servo.set_servo_pulse(pwm, 5, int(servo_value))
+                            servo.set_servo_pulse(pwm, SERVO_PIN_CAM_X, int(servo_value))
 
                     # Camera Tilt Servo
                     elif key == CTRL_R_THUMB_Y:
                         if not DISABLE_SERVO:
                             servo_value = int((-value*204)+307)
-                            servo.set_servo_pulse(pwm, 4, int(servo_value))
+                            servo.set_servo_pulse(pwm, SERVO_PIN_CAM_Y, int(servo_value))
 
                     if state_map[STATE_DRIVING_MODE] == DRIVING_MODE_REMOTE:
 
@@ -421,10 +416,10 @@ def run_controller_thread():
                                 else:
                                     state_map[STATE_STOP_THROTTLE] = 0
                                 servo_value = int((value * 204) + 307)
-                                servo.set_servo_pulse(pwm, 0, servo_value)
-                                servo.set_servo_pulse(pwm, 1, servo_value)
-                                servo.set_servo_pulse(pwm, 2, int(servo_value * 0.8))
-                                servo.set_servo_pulse(pwm, 3, int(servo_value * 0.8))
+                                servo.set_servo_pulse(pwm, SERVO_PIN_FR, servo_value)
+                                servo.set_servo_pulse(pwm, SERVO_PIN_FL, servo_value)
+                                servo.set_servo_pulse(pwm, SERVO_PIN_RR, int(servo_value * 0.8))
+                                servo.set_servo_pulse(pwm, SERVO_PIN_RL, int(servo_value * 0.8))
 
                         # Throttle Command
                         elif key == CTRL_R_TRIGGER:

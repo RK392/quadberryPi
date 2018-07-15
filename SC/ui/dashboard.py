@@ -29,6 +29,7 @@ class SidePanel(GridLayout):
         # listen to size and position changes
         self.bind(pos=update_rect, size=update_rect)
 
+
 class MainScreen(BoxLayout):
 
     def __init__(self, **kwargs):
@@ -105,15 +106,15 @@ class MainScreen(BoxLayout):
         self.fields[STATE_OTHER_LIGHTS] = Label(text='0')
         self.right_panel.add_widget(self.fields[STATE_OTHER_LIGHTS])
         self.right_panel.add_widget(Label(text='Heading'))
-        self.fields['heading'] = Label(text='0')
-        self.right_panel.add_widget(self.fields['heading'])
+        self.fields[STATE_IMU_READING_HEADING] = Label(text='0')
+        self.right_panel.add_widget(self.fields[STATE_IMU_READING_HEADING])
         self.right_panel.add_widget(Label(text='Roll'))
-        self.fields['roll'] = Label(text='0')
-        self.right_panel.add_widget(self.fields['roll'])
+        self.fields[STATE_IMU_READING_ROLL] = Label(text='0')
+        self.right_panel.add_widget(self.fields[STATE_IMU_READING_ROLL])
         self.right_panel.add_widget(Label(text='Pitch'))
-        self.fields['pitch'] = Label(text='0')
-        self.right_panel.add_widget(self.fields['pitch'])
-        self.fields[STATE_IMU_DATA] = None
+        self.fields[STATE_IMU_READING_PITCH] = Label(text='0')
+        self.right_panel.add_widget(self.fields[STATE_IMU_READING_PITCH])
+        # self.fields[STATE_IMU_DATA] = None
 
     @mainthread
     def update_data(self, state_map):
@@ -131,11 +132,11 @@ class MainScreen(BoxLayout):
                     self.fields[key].text = 'ON' if value == 1 else 'OFF'
                 elif key in (STATE_INDICATOR_MODE, STATE_DRIVING_MODE):
                     self.fields[key].text = value.upper()
-                elif key == STATE_IMU_DATA:
-                    heading, roll, pitch = value[STATE_IMU_READING]
-                    self.fields['heading'].text = str(heading)
-                    self.fields['roll'].text = str(roll)
-                    self.fields['pitch'].text = str(pitch)
+                # elif key == STATE_IMU_DATA:
+                #     heading, roll, pitch = value[STATE_IMU_READING]
+                #     self.fields['heading'].text = str(heading)
+                #     self.fields['roll'].text = str(roll)
+                #     self.fields['pitch'].text = str(pitch)
                 else:
                     self.fields[key].text = str(value)
 

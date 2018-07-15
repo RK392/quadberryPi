@@ -1,93 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="BookmarkManager">
-    <bookmark url="file://$PROJECT_DIR$/SC/ui/dashboard.py" line="64" />
+    <bookmark url="file://$PROJECT_DIR$/SC/ui/dashboard.py" line="65" />
   </component>
   <component name="ChangeListManager">
     <list default="true" id="8ecf2ad7-fd2e-4057-8dac-e7feef799d1f" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/SC/arduino/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SC/imu/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SC/input/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SC/input/joystick.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SC/light/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SC/light/apa102.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SC/net/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SC/servo/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SC/test/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SC/ui/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SC/util/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SC/util/constants.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SC/util/control.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Arduino/Arduino.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Arduino2/Arduino2.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FTQLH80IEX52MJV-2-/FTQLH80IEX52MJV-2-.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/FTQLH80IEX52MJV/FTQLH80IEX52MJV.ino" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/arduino.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/camera client.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client10.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client11.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client12.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client13.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client14.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client15.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client16.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client4.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client6.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client7.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client8.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/client9.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/monitor.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/monitor2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/monitor3.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/new 1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/rpi-stream.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/rpm.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/server.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/server2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/speed.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/test.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/test_photo.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/test_pid.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/untitled.mat" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/xinput.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/xinput10.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/xinput12.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/xinput13.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/xinput15.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/xinput2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/xinput3.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/xinput4.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/xinput6.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/xinputmatlab.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Old Files/xinputmatlab2.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/PID.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_serial.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/arduino/arduino_serial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_serial.py.save" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_serial.py.save.1" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/arduino_serial.py___jb_tmp___" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/SC/ui/dashboard.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/ui/dashboard.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SC/util/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/util/constants.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SC/util/control.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/util/common.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/client.py" beforeDir="false" afterPath="$PROJECT_DIR$/client.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientnew.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientold.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientp.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/clientpackettest.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/test/clientpackettest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/imu.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/imu/imu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/install_server.sh" beforeDir="false" afterPath="$PROJECT_DIR$/install_server.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/light_patterns.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/light/light_patterns.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/logger.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/monitor.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/test/monitor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/mpu.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/test/mpu.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements_server.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements_server.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/serialpacket.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/net/serialpacket.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/serialtest.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/test/serialtest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_a.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/server_ui.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/ui/dashboard.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/serverpackettest.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/test/serverpackettest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/servo.py" beforeDir="false" afterPath="$PROJECT_DIR$/SC/servo/servo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xinput.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/xinputold.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/server.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -101,8 +24,8 @@
       <file leaf-file-name="client.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/client.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="33">
-              <caret line="125" column="33" lean-forward="true" selection-start-line="125" selection-start-column="33" selection-end-line="125" selection-end-column="33" />
+            <state relative-caret-position="873">
+              <caret line="338" column="50" selection-start-line="338" selection-start-column="43" selection-end-line="338" selection-end-column="50" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -110,11 +33,38 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="dashboard.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="imu.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/SC/imu/imu.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="2061">
+              <caret line="94" column="35" lean-forward="true" selection-start-line="94" selection-start-column="35" selection-end-line="94" selection-end-column="35" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="arduino_serial.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/SC/arduino/arduino_serial.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-719">
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="servo.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/SC/servo/servo.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-528" />
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="dashboard.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SC/ui/dashboard.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="99">
-              <caret line="78" column="61" selection-start-line="78" selection-start-column="61" selection-end-line="78" selection-end-column="61" />
+            <state relative-caret-position="213">
+              <caret line="100" column="56" selection-start-line="100" selection-start-column="56" selection-end-line="100" selection-end-column="56" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
               </folding>
@@ -136,22 +86,29 @@
       <file leaf-file-name="constants.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/SC/util/constants.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1441">
-              <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+            <state relative-caret-position="-543">
+              <caret line="88" column="48" selection-start-line="88" selection-start-column="48" selection-end-line="88" selection-end-column="48" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="control.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/SC/util/control.py">
-          <provider selected="true" editor-type-id="text-editor" />
+      <file leaf-file-name="common.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/SC/util/common.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="286">
+              <caret line="33" column="34" lean-forward="true" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
+              <folding>
+                <element signature="e#0#23#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
         </entry>
       </file>
-      <file leaf-file-name="server.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="server.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/server.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="207">
-              <caret line="126" column="58" selection-start-line="126" selection-start-column="55" selection-end-line="126" selection-end-column="58" />
+            <state relative-caret-position="220">
+              <caret line="25" column="20" lean-forward="true" selection-start-line="25" selection-start-column="20" selection-end-line="25" selection-end-column="20" />
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -168,11 +125,6 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="install_server.sh" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/install_server.sh">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -184,16 +136,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>writePack</find>
-      <find>update_data</find>
-      <find>sendcomm</find>
-      <find>read_packet</find>
-      <find>flush</find>
-      <find>py.c</find>
-      <find>python</find>
-      <find>stat</find>
-      <find>state_map</find>
-      <find>logging.info</find>
       <find>logging.debug</find>
       <find />
       <find>writefr</find>
@@ -214,6 +156,16 @@
       <find>PCA9</find>
       <find>DISABLE_SERVO</find>
       <find>app</find>
+      <find>imu_call</find>
+      <find>pwm</find>
+      <find>IMU_DATA</find>
+      <find>IMU_READ</find>
+      <find>IMU(</find>
+      <find>IMU\(</find>
+      <find>READING_HE</find>
+      <find>state_map</find>
+      <find>ho st</find>
+      <find>get_imu_reading</find>
     </findStrings>
     <replaceStrings>
       <replace>\'$1\':</replace>
@@ -257,18 +209,19 @@
         <option value="$PROJECT_DIR$/requirements_server.txt" />
         <option value="$PROJECT_DIR$/install_server.exe" />
         <option value="$PROJECT_DIR$/install_server.sh" />
-        <option value="$PROJECT_DIR$/server.py" />
         <option value="$PROJECT_DIR$/SC/light/apa102.py" />
         <option value="$PROJECT_DIR$/SC/util/constants.py" />
-        <option value="$PROJECT_DIR$/client.py" />
         <option value="$PROJECT_DIR$/SC/ui/dashboard.py" />
+        <option value="$PROJECT_DIR$/client.py" />
+        <option value="$PROJECT_DIR$/server.py" />
+        <option value="$PROJECT_DIR$/SC/util/common.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-8" />
-    <option name="width" value="975" />
-    <option name="height" value="1027" />
+    <option name="x" value="-6" />
+    <option name="width" value="780" />
+    <option name="height" value="821" />
   </component>
   <component name="ProjectView">
     <navigator proportions="" version="1">
@@ -287,12 +240,6 @@
               <item name="python" type="b2602c69:ProjectViewProjectNode" />
               <item name="python" type="462c0819:PsiDirectoryNode" />
               <item name="SC" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="python" type="b2602c69:ProjectViewProjectNode" />
-              <item name="python" type="462c0819:PsiDirectoryNode" />
-              <item name="SC" type="462c0819:PsiDirectoryNode" />
-              <item name="light" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="python" type="b2602c69:ProjectViewProjectNode" />
@@ -376,12 +323,12 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-7" y="-7" width="1550" height="817" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1035" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49833888" visible="true" weight="0.1698612" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49833888" visible="true" weight="0.13540569" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50106835" side_tool="true" visible="true" weight="0.3973799" />
+      <window_info anchor="bottom" id="Event Log" order="7" sideWeight="0.50106835" side_tool="true" visible="true" weight="0.30232558" />
       <window_info anchor="bottom" id="Version Control" order="10" />
       <window_info anchor="bottom" id="Python Console" order="8" />
       <window_info anchor="bottom" id="Run" order="2" sideWeight="0.49947312" weight="0.32890365" />
@@ -512,11 +459,8 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SC/servo/servo.py" />
-    <entry file="file://$PROJECT_DIR$/SC/imu/imu.py" />
     <entry file="file://$PROJECT_DIR$/APA102_Pi/runcolorcycle.py" />
     <entry file="file://$PROJECT_DIR$/APA102_Pi/runcolorcycle2.py" />
-    <entry file="file://$PROJECT_DIR$/SC/arduino/arduino_serial.py" />
     <entry file="file://$PROJECT_DIR$/../temp/SC/net/serialpacket.py" />
     <entry file="file://$PROJECT_DIR$/server_a.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -592,13 +536,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SC/util/constants.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1441">
-          <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../Programming - Copy (2)/sync/python/APA102_Pi/apa102.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-187">
@@ -609,8 +546,26 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/SC/util/control.py">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/SC/servo/servo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-528" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SC/arduino/arduino_serial.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-719">
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SC/imu/imu.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2061">
+          <caret line="94" column="35" lean-forward="true" selection-start-line="94" selection-start-column="35" selection-end-line="94" selection-end-column="35" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/SC/light/light_patterns.py">
       <provider selected="true" editor-type-id="text-editor">
@@ -621,10 +576,37 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/SC/ui/dashboard.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="213">
+          <caret line="100" column="56" selection-start-line="100" selection-start-column="56" selection-end-line="100" selection-end-column="56" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SC/util/constants.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-543">
+          <caret line="88" column="48" selection-start-line="88" selection-start-column="48" selection-end-line="88" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/SC/util/common.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="286">
+          <caret line="33" column="34" lean-forward="true" selection-start-line="33" selection-start-column="34" selection-end-line="33" selection-end-column="34" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/client.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="33">
-          <caret line="125" column="33" lean-forward="true" selection-start-line="125" selection-start-column="33" selection-end-line="125" selection-end-column="33" />
+        <state relative-caret-position="873">
+          <caret line="338" column="50" selection-start-line="338" selection-start-column="43" selection-end-line="338" selection-end-column="50" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
           </folding>
@@ -633,20 +615,10 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/server.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="207">
-          <caret line="126" column="58" selection-start-line="126" selection-start-column="55" selection-end-line="126" selection-end-column="58" />
+        <state relative-caret-position="220">
+          <caret line="25" column="20" lean-forward="true" selection-start-line="25" selection-start-column="20" selection-end-line="25" selection-end-column="20" />
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/SC/ui/dashboard.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="99">
-          <caret line="78" column="61" selection-start-line="78" selection-start-column="61" selection-end-line="78" selection-end-column="61" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
           </folding>
         </state>
       </provider>

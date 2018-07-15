@@ -11,7 +11,7 @@ import json
 import coloredlogs
 
 from SC.net.serialpacket import *
-from SC.util.control import *
+from SC.util.common import *
 from SC.util.constants import *
 from SC.input.joystick import XInputJoystick
 
@@ -25,7 +25,7 @@ app = None
 
 ctrl_map = generate_control_map()
 
-state_map = {}
+state_map = generate_state_map()
 
 
 def handle_joystick(conn, addr, signal_list):
@@ -122,7 +122,9 @@ def handle_socket(conn, addr, signal_list):
                         response = send_command(conn, command_packet)
                         #logging.info("Received:" + repr(response))
                         if response.type == TYPE_VALUE:
-                            state_map = json.loads(response.data)
+                            new_state_map = json.loads(response.data)
+                            for key in new_state_map:
+                                state_map[key] = new_state_map[key]
                             logging.debug('State Map: ' + str(response.data))
                             if not DISABLE_UI_FLAG and app.main_screen is not None:
                                 app.main_screen.update_data(state_map)
