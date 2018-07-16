@@ -119,7 +119,7 @@ class MainScreen(BoxLayout):
     @mainthread
     def update_data(self, state_map):
         logging.debug('Update UI Data...')
-        for key in state_map:
+        for key in state_map.keys():
             value = state_map[key]
             if key in self.fields:
                 if key == STATE_GEAR:
@@ -130,8 +130,10 @@ class MainScreen(BoxLayout):
                         else 'N')
                 elif key in (STATE_HEAD_LIGHTS, STATE_HORN, STATE_OTHER_LIGHTS):
                     self.fields[key].text = 'ON' if value == 1 else 'OFF'
-                elif key in (STATE_INDICATOR_MODE, STATE_DRIVING_MODE):
-                    self.fields[key].text = value.upper()
+                elif key in (STATE_INDICATOR_MODE):
+                    self.fields[key].text = MAP_INDICATOR[value].upper()
+                elif key in (STATE_DRIVING_MODE):
+                    self.fields[key].text = MAP_DRIVING_MODE[value].upper()
                 # elif key == STATE_IMU_DATA:
                 #     heading, roll, pitch = value[STATE_IMU_READING]
                 #     self.fields['heading'].text = str(heading)

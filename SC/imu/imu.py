@@ -131,39 +131,39 @@ class IMU:
                 if self.yaw > 360:
                     self.yaw = self.yaw - 360
 
-                    # Dampening functions
-                    self.roll_total = self.roll_total - self.roll_run[self.t_one]
-                    self.roll_run[self.t_one] = self.roll
-                    self.roll_total = self.roll_total + self.roll_run[self.t_one]
-                    roll = round(self.roll_total / 10, 1)
-                    self.heading_cos_total = self.heading_cos_total - self.heading_cos_run[self.t_three]
-                    self.heading_sin_total = self.heading_sin_total - self.heading_sin_run[self.t_three]
-                    self.heading_cos_run[self.t_three] = math.cos(math.radians(self.yaw))
-                    self.heading_sin_run[self.t_three] = math.sin(math.radians(self.yaw))
-                    self.heading_cos_total = self.heading_cos_total + self.heading_cos_run[self.t_three]
-                    self.heading_sin_total = self.heading_sin_total + self.heading_sin_run[self.t_three]
-                    self.yaw = round(math.degrees(math.atan2(self.heading_sin_total/30,self.heading_cos_total/30)),1)
+                # Dampening functions
+                self.roll_total = self.roll_total - self.roll_run[self.t_one]
+                self.roll_run[self.t_one] = self.roll
+                self.roll_total = self.roll_total + self.roll_run[self.t_one]
+                roll = round(self.roll_total / 10, 1)
+                self.heading_cos_total = self.heading_cos_total - self.heading_cos_run[self.t_three]
+                self.heading_sin_total = self.heading_sin_total - self.heading_sin_run[self.t_three]
+                self.heading_cos_run[self.t_three] = math.cos(math.radians(self.yaw))
+                self.heading_sin_run[self.t_three] = math.sin(math.radians(self.yaw))
+                self.heading_cos_total = self.heading_cos_total + self.heading_cos_run[self.t_three]
+                self.heading_sin_total = self.heading_sin_total + self.heading_sin_run[self.t_three]
+                self.yaw = round(math.degrees(math.atan2(self.heading_sin_total/30,self.heading_cos_total/30)),1)
 
-                    if self.yaw < 0.1:
-                        self.yaw = self.yaw + 360.0
+                if self.yaw < 0.1:
+                    self.yaw = self.yaw + 360.0
 
-                    # yaw is magnetic heading, convert to true heading
-                    self.heading = self.yaw - self.magnetic_deviation
+                # yaw is magnetic heading, convert to true heading
+                self.heading = self.yaw - self.magnetic_deviation
 
-                    if self.heading < 0.1:
-                        self.heading = self.heading + 360
+                if self.heading < 0.1:
+                    self.heading = self.heading + 360
                 if self.heading > 360:
                     self.heading = self.heading - 360
 
-                    self.t_damp = self.hack
-                    self.t_one += 1
-                    if self.t_one == 10:
-                        self.t_one = 0
-                    self.t_three += 1
-                    if self.t_three == 30:
-                        self.t_three = 0
+                self.t_damp = self.hack
+                self.t_one += 1
+                if self.t_one == 10:
+                    self.t_one = 0
+                self.t_three += 1
+                if self.t_three == 30:
+                    self.t_three = 0
 
-                        self.t_print = self.hack
+                    self.t_print = self.hack
 
                 logging.debug('IMU Reading (Heading, Roll, Pitch): ' + str(self.get_imu_reading()))
 

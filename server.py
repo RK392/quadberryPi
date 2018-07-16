@@ -1,7 +1,9 @@
 import sys
 import time
 import threading
+import multiprocessing
 import socket
+import traceback
 from operator import attrgetter
 
 import errno
@@ -18,20 +20,19 @@ from SC.input.joystick import XInputJoystick
 
 DISABLE_UI_FLAG = False
 LOG_LEVEL = 'INFO'
-REFRESH_INTERVAL = 0.25
+REFRESH_INTERVAL = 0.1
 VIDEO_STREAMING_PROGRAM = "A:/gstreamer/1.0/x86_64/bin/gst-launch-1.0.exe"
+
+STOP_SIGNAL = Value('i',0)
 
 app = None
 
-ctrl_map = generate_control_map()
+ctrl_map = None
+state_map = None
 
-state_map = generate_state_map()
-
-
-def handle_joystick(conn, addr, signal_list):
+def handle_joystick(ctrl_map):
     """
     Grab 1st available gamepad, logging changes to the screen.
-    L & R analogue triggers set the vibration motor speed.
     """
 
     joysticks = XInputJoystick.enumerate_devices()
@@ -50,42 +51,44 @@ def handle_joystick(conn, addr, signal_list):
 
     @j.event
     def on_button(button, pressed):
-        global ctrl_map
         logging.debug('button '+str(button)+': '+str(pressed))
-        for key in ctrl_map:
+        for key in ctrl_map.keys():
             if ctrl_map[key][CTRL_JOYSTICK_FIELD] == button:
-                ctrl_map[key][CTRL_VALUE] = pressed
-                ctrl_map[key][CTRL_FLAG] = True
+                newval = ctrl_map[key]
+                newval[CTRL_VALUE] = pressed
+                newval[CTRL_FLAG] = 1
+                ctrl_map[key] = newval
 
     left_speed = 0
     right_speed = 0
 
     @j.event
     def on_axis(axis, value):
-        global ctrl_map
 
         logging.debug('axis '+str(axis)+': '+str(value))
-        for key in ctrl_map:
+        for key in ctrl_map.keys():
             if ctrl_map[key][CTRL_JOYSTICK_FIELD] == axis:
-                ctrl_map[key][CTRL_VALUE] = value
-                ctrl_map[key][CTRL_FLAG] = True
+                newval = ctrl_map[key]
+                newval[CTRL_VALUE] = value
+                newval[CTRL_FLAG] = 1
+                ctrl_map[key] = newval
         # j.set_vibration(left_speed, right_speed)
 
     try:
         while True:
-            if(signal_list[0]):
+            if(STOP_SIGNAL.value == 1):
                 raise Exception("Kill signal sent")
             # logging.debug("Send Loop")
             # conn.send("")
             j.dispatch_events()
-            time.sleep(.1)
+            #time.sleep(.1)
     except Exception as e:
         logging.error(e)
     except KeyboardInterrupt:
         logging.debug("Keyboard Interrupt")
 
 
-def handle_socket(conn, addr, signal_list):
+def handle_socket(conn, addr):
     global ctrl_map
     global state_map
     global app
@@ -93,15 +96,17 @@ def handle_socket(conn, addr, signal_list):
     try:
         while(True):
             try:
-                if(signal_list[0]):
+                if(STOP_SIGNAL.value == 1):
                     raise Exception("Kill signal sent")
 
                 # if global state is updated
                 #     send update to pi
                 try:
-                    for key in ctrl_map:
-                        if ctrl_map[key][CTRL_FLAG]:
-                            ctrl_map[key][CTRL_FLAG] = False
+                    for key in ctrl_map.keys():
+                        if ctrl_map[key][CTRL_FLAG] == 1:
+                            newval = ctrl_map[key]
+                            newval[CTRL_FLAG] = 0
+                            ctrl_map[key] = newval
                             nwk_str_val = ctrl_map[key][CTRL_NETWORK_LABEL] + '_' + str(ctrl_map[key][CTRL_VALUE])
                             logging.info('Sending Command: ' + nwk_str_val)
                             command_packet = Packet(TYPE_CMD_UPDATE, nwk_str_val)
@@ -142,12 +147,12 @@ def handle_socket(conn, addr, signal_list):
     except KeyboardInterrupt:
         logging.debug("Keyboard Interrupt")
 
-def run_server():
+def run_server(state_map, ctrl_map):
     global app
 
     threads = []
-    signal = False
-    signal_list = [signal]
+    # signal = Value('i', 0)
+    # p]o\ = [signal]
 
     if not DISABLE_UI_FLAG:
         from SC.ui import dashboard
@@ -155,7 +160,7 @@ def run_server():
 
     try:
         HOST = ''                 # Symbolic name meaning all available interfaces
-        PORT = 50008              # Arbitrary non-privileged port
+        PORT = 9012              # Arbitrary non-privileged port
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.settimeout(0.2)  # timeout for listening
         #s.setblocking(0)
@@ -169,6 +174,7 @@ def run_server():
              "text=quadberrypi",
              "!", "autovideosink", "sync=false", "text-overlay=false"], shell=True)
 
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((HOST, PORT))
         s.listen(1)
         c_count = 1
@@ -176,8 +182,8 @@ def run_server():
             try:
                 conn, addr = s.accept()
                 logging.info("Connection made on "+str(addr))
-                t1 = threading.Thread(name="handle_joystick_"+str(c_count), target=handle_joystick, args=(conn, addr, signal_list))
-                t2 = threading.Thread(name="handle_socket_"+str(c_count), target=handle_socket, args=(conn, addr, signal_list))
+                t1 = multiprocessing.Process(name="handle_joystick_"+str(c_count), target=handle_joystick, args=(ctrl_map,))
+                t2 = threading.Thread(name="handle_socket_"+str(c_count), target=handle_socket, args=(conn, addr))
                 if not DISABLE_UI_FLAG:
                     t3 = threading.Thread(target=app.run, args=())
                     t3.start()
@@ -194,13 +200,17 @@ def run_server():
                 pass
     except Exception as e:
         logging.error(e)
+        logging.error(traceback.format_exc())
     except KeyboardInterrupt:
         logging.debug("Keyboard Interrupt")
     finally:
+        logging.info("Tidying up")
+        logging.info("Closing port")
+        s.close()
         logging.info("Terminating Camera")
         proc.terminate()
-        logging.info("Tidying up")
-        signal_list[0] = True
+        logging.info("Closing other threads/processes")
+        STOP_SIGNAL.value = 1
         if not DISABLE_UI_FLAG:
             app.stop()
         for c_thread in threads:
@@ -216,4 +226,10 @@ if __name__ == "__main__":
             DISABLE_UI_FLAG = (val == '0')
     if DISABLE_UI_FLAG:
         coloredlogs.install(level=LOG_LEVEL, fmt='%(asctime)s %(hostname)s %(name)s[%(process)d] [%(threadName)s] %(levelname)s %(message)s')
-    run_server()
+
+    manager = multiprocessing.Manager()
+
+    ctrl_map = generate_multiprocess_control_map2(manager)
+    state_map = generate_multiprocess_state_map2(manager)
+
+    run_server(state_map, ctrl_map)

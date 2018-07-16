@@ -1,6 +1,8 @@
 import sys
 import socket
 import time
+import traceback
+
 import pigpio
 import os
 from threading import Thread
@@ -25,7 +27,7 @@ STOP_THROTTLE_THRESHOLD = 0.05
 PWM_I2C_ADDRESS = 0x40
 PWM_FREQUENCY = 50
 
-DISABLE_SERVO = True
+DISABLE_SERVO = False
 
 # Controller values
 ctrl_map = generate_control_map()
@@ -117,7 +119,7 @@ class CarClient():
         # Network Variables
         self.server_socket = None
         self.server_host = '192.168.1.75'  # The remote host
-        self.server_port = 50008  # The same port as used by the server
+        self.server_port = 9012  # The same port as used by the server
 
         # Video Streaming Variables
         self.video_process = None
@@ -186,6 +188,7 @@ class CarClient():
             self.run_network_thread()
         except Exception, e:
             logging.error(e)
+            logging.error(traceback.format_exc())
             self.shutdown()
         except KeyboardInterrupt:
             self.shutdown()
@@ -298,25 +301,29 @@ class CarClient():
         logging.info("Ready to accept data.")
 
         while stop_signal == 0:
-            packet = read_packet(self.server_socket)
-            #logging.info('Received a packet.')
-            data = packet.data
-            type = packet.type
-            if type == TYPE_CMD_UPDATE:
-                write_packet(self.server_socket, Packet(TYPE_ACK, ''))
-                for reading in data.split('\n'):
-                    if reading != "":
-                        id, value = reading.split("_")
-                        for key in ctrl_map:
-                            if ctrl_map[key][CTRL_NETWORK_LABEL] == id:
-                                ctrl_map[key][CTRL_VALUE] = float(value)
-                                ctrl_map[key][CTRL_FLAG] = True
-                        logging.debug('Processed: '+repr(reading))
-            elif type == TYPE_CMD_READ:
-                write_packet(self.server_socket, Packet(TYPE_VALUE, json.dumps(state_map)))
-                logging.debug('Processed READ Command')
-            else:
-                write_packet(self.server_socket, Packet(TYPE_ACK, ''))
+            try:
+                packet = read_packet(self.server_socket)
+                #logging.info('Received a packet.')
+                data = packet.data
+                type = packet.type
+                if type == TYPE_CMD_UPDATE:
+                    write_packet(self.server_socket, Packet(TYPE_ACK, ''))
+                    for reading in data.split('\n'):
+                        if reading != "":
+                            id, value = reading.split("_")
+                            for key in ctrl_map:
+                                if ctrl_map[key][CTRL_NETWORK_LABEL] == id:
+                                    ctrl_map[key][CTRL_VALUE] = float(value)
+                                    ctrl_map[key][CTRL_FLAG] = True
+                            logging.info('Processed: '+repr(reading))
+                elif type == TYPE_CMD_READ:
+                    write_packet(self.server_socket, Packet(TYPE_VALUE, json.dumps(state_map)))
+                    logging.debug('Processed READ Command')
+                else:
+                    write_packet(self.server_socket, Packet(TYPE_ACK, ''))
+            except PacketException, e:
+                logging.warn("Invalid packet dropped")
+                logging.warn(e)
 
 
 def handle_indicator_event(mode):
@@ -327,7 +334,7 @@ def handle_indicator_event(mode):
     led_threads.pop(0)
     led_threads.append({'stop_signal': 0})
     if state_map[STATE_INDICATOR_MODE] == mode:
-        logging.info(mode+': ON')
+        logging.info(MAP_INDICATOR[mode]+': ON')
         led_threads[0]['thread'] = Thread(target=light_patterns.indicator_lights,
                                           args=(led_strip, mode, 'single', led_threads[0]))
         led_threads[0]['thread'].start()
@@ -395,13 +402,13 @@ def run_controller_thread():
                     # Camera Pan Servo
                     if key == CTRL_R_THUMB_X:
                         if not DISABLE_SERVO:
-                            servo_value = int((-value*204)+307)
+                            servo_value = int((-value*409*0.75)+307)-2
                             servo.set_servo_pulse(pwm, SERVO_PIN_CAM_X, int(servo_value))
 
                     # Camera Tilt Servo
                     elif key == CTRL_R_THUMB_Y:
                         if not DISABLE_SERVO:
-                            servo_value = int((-value*204)+307)
+                            servo_value = int((-value*409*0.7)+307)-10
                             servo.set_servo_pulse(pwm, SERVO_PIN_CAM_Y, int(servo_value))
 
                     if state_map[STATE_DRIVING_MODE] == DRIVING_MODE_REMOTE:
